@@ -23,14 +23,17 @@ model_name = "mh_body_male_custom"
 with open(input_dir) as f:
     data = json.load(f)
 
+##### Check First frame for insuficient landmarks #####
 LandSize = len(data['landmarks']['0'][model_name])
+LandDesired = len(data['landmark_names'][model_name])
 
-if LandSize == 14:
-    print("You have :", LandSize, "Landmarks")
+if LandSize == LandDesired:
+    print("You have Imported:", LandSize, "Landmarks")
 else:
-    print('No Landmarks to Import')
+    print('Insufficient Landmarks at Import')
+    exit()
 
-
+##### Create Points List #####
 points = []
 for i in range(0,len(data['landmarks'])):
     strnum = str(i)
@@ -51,8 +54,9 @@ point3d = np.transpose(point3d)
 # print(point3d[0:,14]-point3d[0:,28])
 
 
+##### Derivatives Calculation #####
 sz = point3d.shape
-print(sz[1])
+# print(sz[1])
 t1 = LandSize
 t2 = 2*LandSize
 StartFrame = 2*LandSize # Start from 3rd Frame's 3D points
@@ -71,7 +75,7 @@ for col in range(StartFrame, sz[1] - StartFrame):
         vel = Pt1 - PtMinus1
         acc = Pt2 + PtMinus2 - (2*Pt0)
 
-        print(vel,acc)
+        # print(vel,acc)
 
 
 
