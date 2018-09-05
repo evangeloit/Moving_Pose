@@ -40,7 +40,7 @@ for i in range(0,len(data['landmarks'])):
             # print(point3d)
 
 #### Convert to numpy array for calculations ###
-point3d = np.array(points)
+point3d = np.matrix(points)
 point3d = np.transpose(point3d)
 
 #### Normalization of 3d points with Gaussian filter [5 1] ####
@@ -52,7 +52,7 @@ point3d = np.transpose(point3d)
 
 
 sz = point3d.shape
-# print(sz[1])
+print(sz[1])
 t1 = LandSize
 t2 = 2*LandSize
 StartFrame = 2*LandSize # Start from 3rd Frame's 3D points
@@ -60,12 +60,18 @@ count = 0
 
 for col in range(StartFrame, sz[1] - StartFrame):
     for row in range(0, sz[0]):
-        Pt0 = point3d[row, col]
+        Pt0 = point3d[row, col] # Current Frame
         Pt1 = point3d[row, col + t1]
         Pt2 = point3d[row, col + t2]
         PtMinus1 = point3d[row, col - t2]
         PtMinus2 = point3d[row, col - t2]
+        # print(PtMinus2)
 
+        # Derivatives
+        vel = Pt1 - PtMinus1
+        acc = Pt2 + PtMinus2 - (2*Pt0)
+
+        print(vel,acc)
 
 
 
