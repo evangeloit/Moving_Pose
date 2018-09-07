@@ -28,7 +28,7 @@ LandSize = len(data['landmarks']['0'][model_name])
 LandDesired = len(data['landmark_names'][model_name])
 
 if LandSize == LandDesired:
-    print("You have Imported:", LandSize, "Landmarks")
+    print("import:", LandSize, "Landmarks")
 else:
     print('Insufficient Landmarks at import')
     exit()
@@ -40,18 +40,46 @@ for i in range(0, len(data['landmarks'])):
     # print(strnum)
     for item in data['landmarks'][strnum][model_name]:
             points.append(item)
-            # print(point3d)
+
+# print(points)
 
 #### Convert to numpy array for calculations ####
+
+## as an numpy array ##
+
 point3d = np.array(points)
 point3d = np.transpose(point3d)
+
+## for list ##
+
+# point3d = points
 
 ### Normalization of 3d points with Gaussian filter [5 1]####
 # GFpoint3d = gaussian_filter(point3d, sigma=1)
 # print(GFpoint3d[2,28])
 
-
 #### Derivatives Calculation ####
+
+## 1st with List ##
+
+
+# Pt0 = []
+# Pt1 = []
+# Pt2 = []
+# PtMinus1 = []
+# PtMinus2 = []
+# for i in range(28, len(point3d) - 28, 14):
+#     for j in range(0, 14):
+#         Pt0.append(point3d[i+j])
+#         Pt1.append(point3d[i+j+t1])
+#         Pt2.append(point3d[i+j+t2])
+#         PtMinus1.append(point3d[i+j-t1])
+#         PtMinus2.append(point3d[i+j-t2])
+#
+# print(Pt0[13957])
+
+## 2nd with np.arrays ##
+
 sz = point3d.shape
 t1 = LandSize
 t2 = 2*LandSize
@@ -61,6 +89,7 @@ Pt1 = []
 Pt2 = []
 PtMinus1 = []
 PtMinus2 = []
+
 for col in range(StartFrame, sz[1] - StartFrame):
     for row in range(0, sz[0]):
         Pt0.extend([point3d[row, col]]) # Current Frame
@@ -74,10 +103,14 @@ for col in range(StartFrame, sz[1] - StartFrame):
 vel = np.asarray(Pt1) - np.asarray(PtMinus1)
 acc = np.asarray(Pt2) + np.asarray(PtMinus2) - (2*(np.asarray(Pt0)))
 
+#Feature Vector
 f_vector = np.column_stack((Pt0, vel, acc))
+Pt0 = np.array(Pt0)
 # f_vector = np.transpose(f_vector)
-print(f_vector[:, 2])
-print(acc)
+
+# print(f_vector[:, 0])
+print(f_vector)
+print(Pt0)
 
 # print(len(PtMinus1),len(PtMinus2),len(Pt0),len(Pt1),len(Pt2))
 # vel = np.array(vel)
