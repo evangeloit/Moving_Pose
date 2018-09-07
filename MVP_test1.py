@@ -50,6 +50,7 @@ for i in range(0, len(data['landmarks'])):
 point3d = np.array(points)
 point3d = np.transpose(point3d)
 
+print(point3d)
 ## for list ##
 
 # point3d = points
