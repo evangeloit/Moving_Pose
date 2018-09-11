@@ -4,7 +4,7 @@ from scipy.ndimage import gaussian_filter
 import matplotlib.pyplot as plt
 import cv2
 
-input_dir = "/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/rs/Human_tracking/alex_far_01_ldm.json"
+input_dir = "alex_far_01_ldm.json"
 model_name = "mh_body_male_custom"
 
 ##### My implementation / Import json #####
