@@ -48,15 +48,14 @@ print(p3d.shape)
 
 #### Derivatives Calculation ####
 
-sz = p3d.shape
-# print(sz[1])
-# pt1 = np.array([])
+sz = p3d.shape #size of p3d array
+StartFrame = 2 # Start from 3rd Frame's 3D points# pt1 = np.array([])
 pt0 = []
 pt1 = []
 pt2 = []
 ptm1 = []
 ptm2 = []
-for fr in range(2,1001-2):
+for fr in range(StartFrame, sz[0]-StartFrame):
     Pt0 = []
     Pt1 = []
     Pt2 = []
@@ -98,7 +97,7 @@ print(f_v[996,0:])
 # print(Pt0[996,:])
 
 
-#
+# PLOTS 
 plt.imshow(f_v)
 plt.show(block=True)
 # plt.pause(100)
