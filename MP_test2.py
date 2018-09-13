@@ -109,13 +109,14 @@ for x in range(1, 42):
         f_gauss = np.column_stack((f_gauss, gaussian_filter1d(f_v[:, x], sigma=sigma, truncate=t)))
 
 
-print(f_gauss.shape)
+f_v_gauss = np.concatenate((f_gauss, f_v[:, 42:126]), axis=1)
+print(f_v_gauss.shape)
 print(f_v.shape)
 
 
 # PLOTS
 plt.plot(f_v[:, 0], label='Before Smooth')
-plt.plot(f_gauss[:, 0], label='After Smooth')
+plt.plot(f_v_gauss[:, 0], label='After Smooth')
 
 plt.xlabel('frames')
 plt.ylabel('X coord')
