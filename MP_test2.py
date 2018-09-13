@@ -1,6 +1,6 @@
 import numpy as np
 import json
-from scipy.ndimage import gaussian_filter
+from scipy.ndimage import gaussian_filter1d
 import matplotlib.pyplot as plt
 import cv2
 
@@ -43,7 +43,7 @@ for i in range(0, len(data['landmarks'])):
 p3d = np.array(points)
 # tt = np.array(range(0,i*k*j)).reshape((i,j*k))
 
-print(p3d.shape)
+# print(p3d.shape)
 # print(len(points))
 
 #### Derivatives Calculation ####
@@ -85,21 +85,40 @@ Ptm2 = np.array(ptm2)
 
 vec = Pt1 - Ptm1
 acc = Pt2 + Ptm2 - 2*Pt0
+# print(Pt0.shape)
+# print(vec.shape)
+# print(acc.shape)
 
-print(vec.shape)
-print(acc.shape)
+## Feature Vector
+f_v = np.concatenate((Pt0,vec,acc), axis=1)
+z = np.copy(f_v[996, :])
+z = np.matlib.repmat(z, 3, 1)
 
-# Feature Vector
-plt.interactive(True)
-f_v = np.concatenate ((Pt0,vec,acc), axis=1)
+f_v = np.vstack((f_v, z))
+
+size_f_v = f_v.shape
+
+
+## Gaussian Filter 5 by 1 in time dimension
+sigma = 1
+w = 5  # windowSize
+t = (((w - 1) / 2) - 0.5) / sigma  # truncate
+f_gauss = gaussian_filter1d(f_v[:, 0], sigma=sigma, truncate=t)
+
+for x in range(1, 42):
+        f_gauss = np.column_stack((f_gauss, gaussian_filter1d(f_v[:, x], sigma=sigma, truncate=t)))
+
+
+print(f_gauss.shape)
 print(f_v.shape)
-print(f_v[996,0:])
-# print(Pt0[996,:])
 
 
-# PLOTS 
-plt.imshow(f_v)
-plt.show(block=True)
-# plt.pause(100)
-# plt.gca().set_aspect('auto')
-# plt.savefig('filename.png', dpi=600)
+# PLOTS
+plt.plot(f_v[:, 0], label='Before Smooth')
+plt.plot(f_gauss[:, 0], label='After Smooth')
+
+plt.xlabel('frames')
+plt.ylabel('X coord')
+plt.title('X coordinate before &\nafter Gaussian smoothing')
+plt.legend()
+plt.show()
