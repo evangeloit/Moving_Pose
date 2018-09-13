@@ -48,7 +48,7 @@ for x in range(1, sz_p3d[1]):
         f_gauss = np.column_stack((f_gauss, gaussian_filter1d(p3d[:, x], sigma=sigma, truncate=t)))
 
 # Feature Vector with filtered coordinates [1001 x 126]
-p3d_gauss = np.concatenate((f_gauss, p3d[:, sz_p3d[1]:p3d.shape[0]]), axis=1)
+p3d_gauss = f_gauss
 
 print(p3d.shape)
 print(p3d_gauss.shape)
