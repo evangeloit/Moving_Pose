@@ -94,7 +94,7 @@ acc = Pt2 + Ptm2 - 2*Pt0
 ## Feature Vector
 f_v = np.concatenate((Pt0, vec, acc), axis=1)
 z = np.copy(f_v[996, :])
-z = np.matlib.repmat(z, 4, 1)
+z = np.matlib.repmat(z, 3, 1)
 f_vec_fil = np.vstack((f_v, z))
 
 print(f_vec_fil.shape)
