@@ -26,10 +26,9 @@ else:
 points = []
 
 for i in range(0, len(data['landmarks'])):
-    strnum = str(i)
-    # print(strnum)
+    StrNum = str(i)
     frames = []
-    for item in data['landmarks'][strnum][model_name]:
+    for item in data['landmarks'][StrNum][model_name]:
         frames.extend(item)
 
     points.append(frames)
@@ -95,9 +94,9 @@ acc = Pt2 + Ptm2 - 2*Pt0
 f_v = np.concatenate((Pt0, vec, acc), axis=1)
 z = np.copy(f_v[996, :])
 z = np.matlib.repmat(z, 3, 1)
-f_vec_fil = np.vstack((f_v, z))
+feat_vec = np.vstack((f_v, z))
 
-print(f_vec_fil.shape)
+print(feat_vec.shape)
 
 # PLOTS
 plt.plot(p3d[:, 3], label='Before Smooth')
