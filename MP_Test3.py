@@ -4,28 +4,40 @@ from scipy.ndimage import gaussian_filter1d
 import matplotlib.pyplot as plt
 
 
-input_dir = "alex_far_01_ldm.json"
-model_name = "mh_body_male_custom"
+# input_dir = "alex_far_01_ldm.json"
+# model_name = "mh_body_male_custom"
+dataset = "mhad_s01_a04"
+dataset_dir = "/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/" + dataset + ".json"
+input_dir = "/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/rs/Human_tracking/"\
+    + dataset + "_results_ldm.json"
+model_name = 'mh_body_male_customquat'
 
 ##### My implementation / Import json #####
 with open(input_dir) as f:
     data = json.load(f)
 
-##### Check First frame for insuficient landmarks #####
-LandSize = len(data['landmarks']['0'][model_name])
-LandDesired = len(data['landmark_names'][model_name])
+with open(dataset_dir) as l:
+    data2 = json.load(l)
 
-if LandSize == LandDesired:
-    print("import:", LandSize, "Landmarks")
-else:
-    print('Insufficient Landmarks at import')
-    exit()
+init_frame = data2['limits'][0]
+last_frame = data2['limits'][1]
+
+##### Check First frame for insuficient landmarks #####
+# LandSize = len(data['landmarks']['0'][model_name])
+# LandDesired = len(data['landmark_names'][model_name])
+# #
+# # if LandSize == LandDesired:
+# #     print("import:", LandSize, "Landmarks")
+# # else:
+# #     print('Insufficient Landmarks at import')
+# #     exit()
 
 ##### Create 3D points List #####
 
 points = []
-
-for i in range(0, len(data['landmarks'])):
+# print(len(data['landmarks']))
+# for i in range(init_frame, len(data['landmarks'])):
+for i in range(init_frame, last_frame):
     StrNum = str(i)
     frames = []
     for item in data['landmarks'][StrNum][model_name]:
@@ -67,7 +79,7 @@ for fr in range(StartFrame, sz_p3d[0]-StartFrame):
     Ptm1 = []
     Ptm2 = []
     for cl in range(0, sz_p3d[1]):
-        Pt0.extend([p3d_gauss[fr,cl]])
+        Pt0.extend([p3d_gauss[fr, cl]])
         Pt1.extend([p3d_gauss[fr+1, cl]])
         Pt2.extend([p3d_gauss[fr+2, cl]])
         Ptm1.extend([p3d_gauss[fr-1, cl]])
@@ -92,7 +104,8 @@ acc = Pt2 + Ptm2 - 2*Pt0
 
 ## Feature Vector
 f_v = np.concatenate((Pt0, vec, acc), axis=1)
-z = np.copy(f_v[996, :])
+# print(f_v.shape[0])
+z = np.copy(f_v[f_v.shape[0]-1, :])
 z = np.matlib.repmat(z, 3, 1)
 feat_vec = np.vstack((f_v, z))
 
