@@ -3,6 +3,8 @@ import json
 from scipy.ndimage import gaussian_filter1d
 from scipy.spatial.distance import pdist, squareform
 import matplotlib.pyplot as plt
+import os
+
 from matplotlib import cm as cm
 
 
@@ -118,12 +120,14 @@ print(feat_vec.shape)
 
 sim_f_v = squareform(pdist(feat_vec))
 print(sim_f_v.shape)
-# sim_Pt0 = squareform(pdist(Pt0))
-# sim_vec = squareform(pdist(vec))
-# sim_acc = squareform(pdist(acc))
+sim_Pt0 = squareform(pdist(Pt0))
+sim_vec = squareform(pdist(vec))
+sim_acc = squareform(pdist(acc))
 
 ## Similarity - Plot ##
 
+my_file = dataset + '_sim_mat'
+goal_dir = os.path.join(os.getcwd() + "/plots/MP_Similiraty_Matrix/")
 fig, ax = plt.subplots(figsize=(20, 20))
 # cmap = cm.get_cmap('YlGnBu')
 cax = ax.matshow(sim_f_v, interpolation='nearest')
@@ -131,5 +135,7 @@ ax.grid(True)
 plt.xlabel('frames')
 plt.ylabel('frames')
 plt.title('Similarity Matrix\n Moving Pose Descriptor')
-fig.colorbar(cax, ticks=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, .75, .8, .85, .90, .95, 1])
+fig.colorbar(cax)
 plt.show()
+print(goal_dir+my_file)
+fig.savefig(goal_dir+my_file)
