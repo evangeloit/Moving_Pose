@@ -1,7 +1,10 @@
 import numpy as np
 import json
 from scipy.ndimage import gaussian_filter1d
+from scipy.spatial.distance import pdist, squareform
 import matplotlib.pyplot as plt
+from matplotlib import cm as cm
+
 
 
 # input_dir = "alex_far_01_ldm.json"
@@ -12,7 +15,7 @@ input_dir = "/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/r
     + dataset + "_results_ldm.json"
 model_name = 'mh_body_male_customquat'
 
-##### My implementation / Import json #####
+##### Import json #####
 with open(input_dir) as f:
     data = json.load(f)
 
@@ -21,16 +24,6 @@ with open(dataset_dir) as l:
 
 init_frame = data2['limits'][0]
 last_frame = data2['limits'][1]
-
-##### Check First frame for insuficient landmarks #####
-# LandSize = len(data['landmarks']['0'][model_name])
-# LandDesired = len(data['landmark_names'][model_name])
-# #
-# # if LandSize == LandDesired:
-# #     print("import:", LandSize, "Landmarks")
-# # else:
-# #     print('Insufficient Landmarks at import')
-# #     exit()
 
 ##### Create 3D points List #####
 
@@ -111,12 +104,32 @@ feat_vec = np.vstack((f_v, z))
 
 print(feat_vec.shape)
 
-# PLOTS
-plt.plot(p3d[:, 3], label='Before Smooth')
-plt.plot(p3d_gauss[:, 3], label='After Smooth')
+## Gaussian Smoothing - Plot ##
+# plt.plot(p3d[:, 3], label='Before Smooth')
+# plt.plot(p3d_gauss[:, 3], label='After Smooth')
+#
+# plt.xlabel('frames')
+# plt.ylabel('X coord')
+# plt.title('X coordinate before &\nafter Gaussian smoothing')
+# plt.legend()
+# plt.show()
 
+## Similarity Matrix ##
+
+sim_f_v = squareform(pdist(feat_vec))
+print(sim_f_v.shape)
+# sim_Pt0 = squareform(pdist(Pt0))
+# sim_vec = squareform(pdist(vec))
+# sim_acc = squareform(pdist(acc))
+
+## Similarity - Plot ##
+
+fig, ax = plt.subplots(figsize=(20, 20))
+# cmap = cm.get_cmap('YlGnBu')
+cax = ax.matshow(sim_f_v, interpolation='nearest')
+ax.grid(True)
 plt.xlabel('frames')
-plt.ylabel('X coord')
-plt.title('X coordinate before &\nafter Gaussian smoothing')
-plt.legend()
+plt.ylabel('frames')
+plt.title('Similarity Matrix\n Moving Pose Descriptor')
+fig.colorbar(cax, ticks=[0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, .75, .8, .85, .90, .95, 1])
 plt.show()
