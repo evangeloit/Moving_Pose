@@ -11,7 +11,7 @@ from matplotlib import cm as cm
 
 # input_dir = "alex_far_01_ldm.json"
 # model_name = "mh_body_male_custom"
-dataset = "mhad_s01_a04"
+dataset = "mhad_s02_a04"
 dataset_dir = "/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/" + dataset + ".json"
 input_dir = "/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/rs/Human_tracking/"\
     + dataset + "_results_ldm.json"
@@ -120,17 +120,17 @@ print(feat_vec.shape)
 
 sim_f_v = squareform(pdist(feat_vec))
 print(sim_f_v.shape)
-sim_Pt0 = squareform(pdist(Pt0))
-sim_vec = squareform(pdist(vec))
-sim_acc = squareform(pdist(acc))
+# sim_Pt0 = squareform(pdist(Pt0))
+# sim_vec = squareform(pdist(vec))
+# sim_acc = squareform(pdist(acc))
 
 ## Similarity - Plot ##
 
 my_file = dataset + '_sim_mat'
-goal_dir = os.path.join(os.getcwd() + "/plots/MP_Similiraty_Matrix/")
+goal_dir = os.path.join(os.getcwd() + "/plots/MP_Similarity_Matrix/")
 fig, ax = plt.subplots(figsize=(20, 20))
 # cmap = cm.get_cmap('YlGnBu')
-cax = ax.matshow(sim_f_v, interpolation='nearest')
+cax = ax.matshow(sim_f_v, interpolation='None')
 ax.grid(True)
 plt.xlabel('frames')
 plt.ylabel('frames')
