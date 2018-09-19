@@ -10,9 +10,11 @@ from matplotlib import cm as cm
 # input_dir = "alex_far_01_ldm.json"
 # model_name = "mh_body_male_custom"
 
-dataset = ['mhad_s01_a04', 'mhad_s02_a04', 'mhad_s03_a04', 'mhad_s09_a01', 'mhad_s11_a04']
+dataset = ['mhad_s01_a04', 'mhad_s02_a04', 'mhad_s03_a04','mhad_s04_a04'\
+          ,'mhad_s05_a04','mhad_s06_a04','mhad_s07_a04','mhad_s08_a04',\
+           'mhad_s09_a01','mhad_s10_a04', 'mhad_s11_a04','mhad_s12_a04',]
 model_name = 'mh_body_male_customquat'
-sim_new = []
+FV_new = []
 
 for name in dataset:
     dataset_dir = "/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/" + name + ".json"
@@ -103,7 +105,7 @@ for name in dataset:
     f_v = np.concatenate((Pt0, vec, acc), axis=1)
     # print(f_v.shape[0])
     z = np.copy(f_v[f_v.shape[0] - 1, :])
-    z = np.matlib.repmat(z, 3, 1)
+    z = np.matlib.repmat(z, 4, 1)
     feat_vec = np.vstack((f_v, z))
 
     print(feat_vec.shape)
@@ -122,7 +124,7 @@ for name in dataset:
 
     sim_f_v = squareform(pdist(feat_vec))
 
-    sim_new.append(sim_f_v)
+    FV_new.append(feat_vec)
 
     # print(sim_f_v.shape)
     # sim_Pt0 = squareform(pdist(Pt0))
@@ -146,18 +148,33 @@ for name in dataset:
     fig.savefig(goal_dir + my_file)
 
 
-sim_n = np.array(sim_new)
+fv_new = np.array(FV_new)
 
-f_v_s01a04 = np.copy(sim_n[0])
-f_v_s02a04 = np.copy(sim_n[1])
-f_v_s03a04 = np.copy(sim_n[2])
-f_v_s09a01 = np.copy(sim_n[3])
-f_v_s11a04 = np.copy(sim_n[4])
+f_v_s01a04 = np.copy(fv_new[0])
+f_v_s02a04 = np.copy(fv_new[1])
+f_v_s03a04 = np.copy(fv_new[2])
+f_v_s09a01 = np.copy(fv_new[3])
+f_v_s11a04 = np.copy(fv_new[4])
 
-# print(f_v_s01a04.shape, f_v_s02a04.shape, f_v_s03a04.shape, f_v_s09a01.shape, f_v_s11a04.shape)
+print(f_v_s01a04.shape, f_v_s02a04.shape, f_v_s03a04.shape, f_v_s09a01.shape, f_v_s11a04.shape)
 
 ### Comparison of s01a04 Sim_Matrix with the all the other subjexts matrices ####
 
-for subject in range(1, len(dataset)):
-    Y = cdist(sim_n[0], sim_n[subject], 'euclidean')
+for subject in range(0, len(dataset)):
+    Y = cdist(fv_new[2], fv_new[subject], 'euclidean')
 
+    ## Similarity - Plot ##
+
+    my_file2 = str(subject) + '_sim_mat'
+    goal_dir2 = os.path.join(os.getcwd() + "/plots/MP_Similarity_Matrix/comparisons/")
+    fig, ax = plt.subplots(figsize=(20, 20))
+    # cmap = cm.get_cmap('YlGnBu')
+    cax = ax.matshow(Y, interpolation='nearest')
+    ax.grid(True)
+    plt.xlabel('frames')
+    plt.ylabel('frames')
+    plt.title('Similarity Matrix\n Comparison s01a04')
+    fig.colorbar(cax)
+    # plt.show()
+    print(goal_dir2 + my_file2)
+    fig.savefig(goal_dir2 + my_file2)
