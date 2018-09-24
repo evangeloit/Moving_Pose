@@ -1,7 +1,6 @@
 import numpy as np
 import json
 from scipy.ndimage import gaussian_filter1d
-from scipy.spatial.distance import pdist, squareform, cdist
 import matplotlib.pyplot as plt
 import os
 
@@ -114,26 +113,31 @@ def smoothPlot(p3d, p3dsmooth):
         plt.show(ax1)
         plt.close('all')
 
-def SimilarityPlot(sim_f_v, sim_path, name=None, flag=None):
+def DistMatPlot(sim_f_v, sim_path, name=None, flag=None, save_flag=None):
 
+    if save_flag == 1:
 
-    goal_dir = os.path.join(sim_path)
-    fig, ax = plt.subplots(figsize=(20, 20))
-    # cmap = cm.get_cmap('YlGnBu')
-    cax = ax.matshow(sim_f_v, interpolation='None')
-    ax.grid(True)
-    plt.xlabel('frames')
-    plt.ylabel('frames')
+        goal_dir = os.path.join(sim_path)
+        fig, ax = plt.subplots()
+        # cmap = cm.get_cmap('YlGnBu')
+        cax = ax.matshow(sim_f_v, interpolation='None')
+        ax.grid(True)
+        plt.xlabel('frames')
+        plt.ylabel('frames')
 
-    if flag == 'similarity':
-        my_file = name + '_sim_mat'
-        plt.title('Self Similarity Matrix\n Moving Pose Descriptor')
-    elif flag == 'compare':
-        my_file = name + '_comp_mat'
-        plt.title('Similarity Matrix\n Comparison' + name)
+        if flag == 'similarity':
+            my_file = name + '_sim_mat'
+            plt.title('Self Similarity Matrix\n Moving Pose Descriptor')
+        elif flag == 'compare':
+            my_file = name + '_comp_mat'
+            plt.title('Distance Matrix\n Comparison ' + name)
 
-    fig.colorbar(cax)
-    plt.close('all')
-    # plt.show()
-    print(goal_dir + my_file)
-    fig.savefig(goal_dir + my_file)
+        fig.colorbar(cax)
+        plt.close('all')
+        # plt.show()
+        print(goal_dir + my_file)
+        fig.savefig(goal_dir + my_file)
+
+    else:
+        print('Passing Plot...')
+        pass
