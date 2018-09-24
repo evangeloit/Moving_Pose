@@ -113,14 +113,14 @@ def smoothPlot(p3d, p3dsmooth):
         plt.show(ax1)
         plt.close('all')
 
-def DistMatPlot(sim_f_v, sim_path, name=None, flag=None, save_flag=None):
+def DistMatPlot(f_v, path, name=None, flag=None, save_flag=None):
 
     if save_flag == 1:
 
-        goal_dir = os.path.join(sim_path)
+        goal_dir = os.path.join(path)
         fig, ax = plt.subplots()
         # cmap = cm.get_cmap('YlGnBu')
-        cax = ax.matshow(sim_f_v, interpolation='None')
+        cax = ax.matshow(f_v, interpolation='None')
         ax.grid(True)
         plt.xlabel('frames')
         plt.ylabel('frames')
