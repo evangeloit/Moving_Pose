@@ -150,13 +150,13 @@ for name in dataset:
 
 fv_new = np.array(FV_new)
 
-f_v_s01a04 = np.copy(fv_new[0])
-f_v_s02a04 = np.copy(fv_new[1])
-f_v_s03a04 = np.copy(fv_new[2])
-f_v_s09a01 = np.copy(fv_new[3])
-f_v_s11a04 = np.copy(fv_new[4])
+# f_v_s01a04 = np.copy(fv_new[0])
+# f_v_s02a04 = np.copy(fv_new[1])
+# f_v_s03a04 = np.copy(fv_new[2])
+# f_v_s09a01 = np.copy(fv_new[3])
+# f_v_s11a04 = np.copy(fv_new[4])
 
-print(f_v_s01a04.shape, f_v_s02a04.shape, f_v_s03a04.shape, f_v_s09a01.shape, f_v_s11a04.shape)
+# print(f_v_s01a04.shape, f_v_s02a04.shape, f_v_s03a04.shape, f_v_s09a01.shape, f_v_s11a04.shape)
 
 ### Comparison of s01a04 Sim_Matrix with the all the other subjexts matrices ####
 
@@ -165,7 +165,7 @@ for subject in range(0, len(dataset)):
 
     ## Similarity - Plot ##
 
-    my_file2 = str(subject) + '_sim_mat'
+    my_file2 = str(subject) + '_comp_mat'
     goal_dir2 = os.path.join(os.getcwd() + "/plots/MP_Similarity_Matrix/comparisons/")
     fig, ax = plt.subplots(figsize=(20, 20))
     # cmap = cm.get_cmap('YlGnBu')
