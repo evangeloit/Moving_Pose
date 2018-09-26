@@ -4,11 +4,7 @@ from scipy.ndimage import gaussian_filter1d
 import matplotlib.pyplot as plt
 import os
 
-def load_data(name):
-
-    dataset_dir = "/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/" + name + ".json"
-    input_dir = "/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/rs/Human_tracking/" \
-                + name + "_results_ldm.json"
+def load_data(input_dir, dataset_dir):
 
     ##### Import json #####
     with open(input_dir) as f:

@@ -10,7 +10,7 @@
 import numpy as np
 from scipy.spatial.distance import pdist, squareform, cdist
 import os
-import MP_tools as mpt
+import MP_tools2 as mpt
 
 # Controllers
 
@@ -41,8 +41,12 @@ FV_new = []
 
 for name in dataset:
 
+    dataset_dir = "/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/" + name + ".json"
+    input_dir = "/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/rs/Human_tracking/" \
+                + name + "_results_ldm.json"
+
     ## Load data from Json ##
-    dataPoints, dataLim = mpt.load_data(name)
+    dataPoints, dataLim = mpt.load_data(input_dir, dataset_dir)
 
     init_frame = dataLim['limits'][0]
     last_frame = dataLim['limits'][1]
