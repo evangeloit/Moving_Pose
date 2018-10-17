@@ -14,7 +14,7 @@ import MP_tools2 as mpt
 
 # Controllers
 
-dataset = ['mhad_s01_a04', 'mhad_s02_a04', 'mhad_s03_a04', 'mhad_s04_a04'\
+dataset = ['mhad_s01_a04', 'mhad_s02_a04', 'mhad_s03_a04','mhad_s04_a04'\
             ,'mhad_s05_a04', 'mhad_s06_a04', 'mhad_s07_a04', 'mhad_s08_a04',\
            'mhad_s09_a01', 'mhad_s10_a04', 'mhad_s11_a04', 'mhad_s12_a04']
 
@@ -79,8 +79,8 @@ fv_new = np.array(FV_new)
 
 ## Comparison of s01a03 Feat Vector with the all the other datasets Feat_Vecs ####
 for subject in range(0, len(dataset)):
-    Y = cdist(fv_new[2], fv_new[subject], 'euclidean')
+    Y = cdist(fv_new[4], fv_new[subject], 'euclidean')
     mpt.DistMatPlot(Y, savefig_comp, name=dataset[subject], flag='compare', save_flag=sflag)
 
-# # Gaussian Smoothing - Plot ##
+# Gaussian Smoothing - Plot ##
 # mpt.smoothPlot(p3d, p3d_gauss)
