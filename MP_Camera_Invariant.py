@@ -66,7 +66,26 @@ for name in dataset:
 
     #### Create Feature Vector ####
 
-    feat_vec = mpt.MovPoseDescriptor(p3d_gauss, StartFrame)
+    feat_vec, vec, acc = mpt.MovPoseDescriptor(p3d_gauss, StartFrame)
+    #
+    # magvec = np.ndarray([vec.shape[0], 15])
+    # magacc = np.ndarray([vec.shape[0], 15])
+    #
+    # for xf in range(0, vec.shape[0]):
+    #     indx = 0
+    #     for xp in range(0, 43, 3):
+    #         point = vec[xf, xp:xp + 3]
+    #         point = acc[xf, xp:xp + 3]
+    #         magvec[xf][indx] = np.linalg.norm(point)
+    #         magacc[xf][indx] = np.linalg.norm(point)
+    #         indx = indx + 1
+    #         print(indx)
+
+
+
+    # print(normV)
+    #     for
+    #     normV = np.linalg.norm(vec)
 
     FV_new.append(feat_vec)
 
@@ -81,15 +100,12 @@ for name in dataset:
 
 # Feature Vector Array for all datasets
 fv_new = np.array(FV_new)
-# print(fv_new.shape)
-# Cparam = []
+
 ## Comparison of s01a03 Feat Vector with the all the other datasets Feat_Vecs ####
 for subject in range(0, len(dataset)):
     Y = cdist(fv_new[4], fv_new[subject], 'euclidean')
     p, q, C, phi = mpt.dtwC(Y, 0.1)
-    # c = C/(fv_new[subject].shape[0]*fv_new[subject].shape[1])
-    # Cparam.append(c)
     mpt.DistMatPlot(Y, savefig_comp, name=dataset[subject], flag='compare', save_flag=sflag)
     mpt.DistMatPlot(Y, savefig_dtw, q, p, name=dataset[subject], flag='DTW', save_flag=sflag)
 
-# print()
+print()

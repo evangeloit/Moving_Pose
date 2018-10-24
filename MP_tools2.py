@@ -85,15 +85,30 @@ def MovPoseDescriptor(p3d_gauss, StartFrame):
     vec = Pt1 - Ptm1
     acc = Pt2 + Ptm2 - 2 * Pt0
 
+    ## magnitude of vel /  and magnitude of acc
+    magvec = np.ndarray([vec.shape[0], 15])
+    magacc = np.ndarray([vec.shape[0], 15])
+
+    for xf in range(0, vec.shape[0]):
+        indx = 0
+        for xp in range(0, 43, 3):
+            pointv = vec[xf, xp:xp + 3]
+            pointa = acc[xf, xp:xp + 3]
+            magvec[xf][indx] = np.linalg.norm(pointv)
+            magacc[xf][indx] = np.linalg.norm(pointa)
+            indx = indx + 1
+            # print(indx)
+
     ## Feature Vector
-    f_v = np.concatenate((Pt0, vec, acc), axis=1)
+    # f_v = np.concatenate((Pt0, vec, acc), axis=1)
+    f_v = np.concatenate((Pt0, magvec, magacc), axis=1)
     # print(f_v.shape[0])
     z = np.copy(f_v[f_v.shape[0] - 1, :])
     z = np.matlib.repmat(z, 4, 1)
     feat_vec = np.vstack((f_v, z))
 
     print(feat_vec.shape)
-    return feat_vec
+    return feat_vec, vec ,acc
 
 
 def smoothPlot(p3d, p3dsmooth):
@@ -135,7 +150,7 @@ def DistMatPlot(f_v, path, q=None, p=None, name=None, flag=None, save_flag=None)
             my_file = name + '_comp_mat'
             plt.title('Distance Matrix\n Comparison ' + name)
         elif flag == 'DTW':
-            # ax.imshow(f_v, interpolation='nearest', cmap='binary')
+            ax.imshow(f_v, interpolation='nearest', cmap='binary')
             ax.hold(True)
             ax.plot(q, p, '-r')
             ax.hold(False)
