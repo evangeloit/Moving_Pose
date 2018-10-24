@@ -67,25 +67,6 @@ for name in dataset:
     #### Create Feature Vector ####
 
     feat_vec, vec, acc = mpt.MovPoseDescriptor(p3d_gauss, StartFrame)
-    #
-    # magvec = np.ndarray([vec.shape[0], 15])
-    # magacc = np.ndarray([vec.shape[0], 15])
-    #
-    # for xf in range(0, vec.shape[0]):
-    #     indx = 0
-    #     for xp in range(0, 43, 3):
-    #         point = vec[xf, xp:xp + 3]
-    #         point = acc[xf, xp:xp + 3]
-    #         magvec[xf][indx] = np.linalg.norm(point)
-    #         magacc[xf][indx] = np.linalg.norm(point)
-    #         indx = indx + 1
-    #         print(indx)
-
-
-
-    # print(normV)
-    #     for
-    #     normV = np.linalg.norm(vec)
 
     FV_new.append(feat_vec)
 

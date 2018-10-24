@@ -41,8 +41,8 @@ def GaussFilter3dPoints(p3d, sigma, t):
     # Feature Vector with filtered coordinates [1001 x 126]
     p3d_gauss = f_gauss
 
-    print(p3d.shape)
-    print(p3d_gauss.shape)
+    # print(p3d.shape)
+    # print(p3d_gauss.shape)
 
     return p3d_gauss
 
@@ -84,6 +84,8 @@ def MovPoseDescriptor(p3d_gauss, StartFrame):
 
     vec = Pt1 - Ptm1
     acc = Pt2 + Ptm2 - 2 * Pt0
+    # print(vec.shape)
+    # print(acc.shape)
 
     ## magnitude of vel /  and magnitude of acc
     magvec = np.ndarray([vec.shape[0], 15])
@@ -97,7 +99,6 @@ def MovPoseDescriptor(p3d_gauss, StartFrame):
             magvec[xf][indx] = np.linalg.norm(pointv)
             magacc[xf][indx] = np.linalg.norm(pointa)
             indx = indx + 1
-            # print(indx)
 
     ## Feature Vector
     # f_v = np.concatenate((Pt0, vec, acc), axis=1)
@@ -107,7 +108,7 @@ def MovPoseDescriptor(p3d_gauss, StartFrame):
     z = np.matlib.repmat(z, 4, 1)
     feat_vec = np.vstack((f_v, z))
 
-    print(feat_vec.shape)
+    # print(feat_vec.shape)
     return feat_vec, vec ,acc
 
 
@@ -159,7 +160,7 @@ def DistMatPlot(f_v, path, q=None, p=None, name=None, flag=None, save_flag=None)
             plt.title('DTW\n Moving Pose Descriptor')
 
         plt.close('all')
-        print(goal_dir + my_file)
+        # print(goal_dir + my_file)
         fig.savefig(goal_dir + my_file, bbox_inches='tight')
 
 
