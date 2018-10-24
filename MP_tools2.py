@@ -2,6 +2,7 @@ import numpy as np
 import json
 from scipy.ndimage import gaussian_filter1d
 import matplotlib.pyplot as plt
+import dpcore
 import os
 
 def load_data(input_dir, dataset_dir):
@@ -109,30 +110,43 @@ def smoothPlot(p3d, p3dsmooth):
         plt.show(ax1)
         plt.close('all')
 
-def DistMatPlot(f_v, path, name=None, flag=None, save_flag=None):
+def dtwC(dist_mat, penalty):
+    p, q, C, phi = dpcore.dp(dist_mat, penalty=penalty)
+    return p, q, C, phi
+
+def DistMatPlot(f_v, path, q=None, p=None, name=None, flag=None, save_flag=None):
 
     if save_flag == 1:
 
         goal_dir = os.path.join(path)
         fig, ax = plt.subplots()
-        # cmap = cm.get_cmap('YlGnBu')
         cax = ax.matshow(f_v, interpolation='None')
+
         ax.grid(True)
         plt.xlabel('frames')
         plt.ylabel('frames')
 
         if flag == 'similarity':
+            fig.colorbar(cax)
             my_file = name + '_sim_mat'
             plt.title('Self Similarity Matrix\n Moving Pose Descriptor')
         elif flag == 'compare':
+            fig.colorbar(cax)
             my_file = name + '_comp_mat'
             plt.title('Distance Matrix\n Comparison ' + name)
+        elif flag == 'DTW':
+            # ax.imshow(f_v, interpolation='nearest', cmap='binary')
+            ax.hold(True)
+            ax.plot(q, p, '-r')
+            ax.hold(False)
+            ax.autoscale(enable=True, axis='both', tight=True)
+            my_file = name + '_dtw_path'
+            plt.title('DTW\n Moving Pose Descriptor')
 
-        fig.colorbar(cax)
         plt.close('all')
-        # plt.show()
         print(goal_dir + my_file)
         fig.savefig(goal_dir + my_file, bbox_inches='tight')
+
 
     else:
         print('Passing Plot...')

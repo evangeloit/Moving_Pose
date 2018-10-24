@@ -11,6 +11,8 @@ import numpy as np
 from scipy.spatial.distance import pdist, squareform, cdist
 import os
 import MP_tools2 as mpt
+import dpcore #dtw c
+import matplotlib.pyplot as plt
 
 # Controllers
 
@@ -33,6 +35,9 @@ savefig_sim = os.getcwd() + "/plots/MP_Similarity_Matrix/"
 
 # Compare one set with all the other datasets -- save Figure path
 savefig_comp = os.getcwd() + "/plots/MP_Similarity_Matrix/comparisons/"
+
+# DTW figures path
+savefig_dtw = os.getcwd() + "/plots/MP_Similarity_Matrix/dtw_results/"
 
 # sflag =  0 : Turn off plots , 1: save figures to path
 sflag = 1
@@ -76,11 +81,15 @@ for name in dataset:
 
 # Feature Vector Array for all datasets
 fv_new = np.array(FV_new)
-
+# print(fv_new.shape)
+# Cparam = []
 ## Comparison of s01a03 Feat Vector with the all the other datasets Feat_Vecs ####
 for subject in range(0, len(dataset)):
     Y = cdist(fv_new[4], fv_new[subject], 'euclidean')
+    p, q, C, phi = mpt.dtwC(Y, 0.1)
+    # c = C/(fv_new[subject].shape[0]*fv_new[subject].shape[1])
+    # Cparam.append(c)
     mpt.DistMatPlot(Y, savefig_comp, name=dataset[subject], flag='compare', save_flag=sflag)
+    mpt.DistMatPlot(Y, savefig_dtw, q, p, name=dataset[subject], flag='DTW', save_flag=sflag)
 
-# Gaussian Smoothing - Plot ##
-# mpt.smoothPlot(p3d, p3d_gauss)
+# print()
