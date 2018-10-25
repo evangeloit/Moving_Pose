@@ -48,7 +48,7 @@ def GaussFilter3dPoints(p3d, sigma, t):
 
 
 def MovPoseDescriptor(p3d_gauss, StartFrame):
-
+    # f32 = np.dtype(np.float32)
     sz_p3d = p3d_gauss.shape
     pt0 = []
     pt1 = []
@@ -88,8 +88,12 @@ def MovPoseDescriptor(p3d_gauss, StartFrame):
     # print(acc.shape)
 
     ## magnitude of vel /  and magnitude of acc
-    magvec = np.ndarray([vec.shape[0], 15])
-    magacc = np.ndarray([vec.shape[0], 15])
+    # magvec = np.ndarray((vec.shape[0], 15), dtype=float)
+    # magacc = np.ndarray((vec.shape[0], 15), dtype=float)
+    # magvec = np.zeros((vec.shape[0], 15), dtype=float)
+    # magacc = np.zeros((vec.shape[0], 15), dtype=float)
+    magvec = np.empty((vec.shape[0], 15), np.dtype(np.float32))
+    magacc = np.empty((vec.shape[0], 15), np.dtype(np.float32))
 
     for xf in range(0, vec.shape[0]):
         indx = 0
@@ -103,13 +107,12 @@ def MovPoseDescriptor(p3d_gauss, StartFrame):
     ## Feature Vector
     # f_v = np.concatenate((Pt0, vec, acc), axis=1)
     f_v = np.concatenate((Pt0, magvec, magacc), axis=1)
-    # print(f_v.shape[0])
     z = np.copy(f_v[f_v.shape[0] - 1, :])
     z = np.matlib.repmat(z, 4, 1)
     feat_vec = np.vstack((f_v, z))
 
     # print(feat_vec.shape)
-    return feat_vec, vec ,acc
+    return feat_vec, vec, acc
 
 
 def smoothPlot(p3d, p3dsmooth):

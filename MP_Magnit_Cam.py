@@ -52,8 +52,8 @@ for name in dataset:
     ## Load data from Json ##
     dataPoints, dataLim = mpt.load_data(input_dir, dataset_dir)
 
-    init_frame = dataLim['limits'][0]
-    last_frame = dataLim['limits'][1]
+    init_frame = 0 # dataLim['limits'][0]
+    last_frame = 110 # dataLim['limits'][1]
 
     ##### Create 3D points array #####
 
@@ -81,11 +81,15 @@ for name in dataset:
 # Feature Vector Array for all datasets
 fv_new = np.array(FV_new)
 
+score = np.empty((len(dataset)), np.dtype(np.float32))
+
 ## Comparison of s01a03 Feat Vector with the all the other datasets Feat_Vecs ####
 for subject in range(0, len(dataset)):
     Y = cdist(fv_new[4], fv_new[subject], 'euclidean')
     p, q, C, phi = mpt.dtwC(Y, 0.1)
     mpt.DistMatPlot(Y, savefig_comp, name=dataset[subject], flag='compare', save_flag=sflag)
     mpt.DistMatPlot(Y, savefig_dtw, q, p, name=dataset[subject], flag='DTW', save_flag=sflag)
+    #Scores of DTW for every subject
+    score[subject] = C[-1, -1]
 
 print()
