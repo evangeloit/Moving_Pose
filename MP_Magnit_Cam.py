@@ -85,7 +85,7 @@ score = np.empty((len(dataset)), np.dtype(np.float32))
 
 ## Comparison of s01a03 Feat Vector with the all the other datasets Feat_Vecs ####
 for subject in range(0, len(dataset)):
-    Y = cdist(fv_new[4], fv_new[subject], 'euclidean')
+    Y = cdist(fv_new[0], fv_new[subject], 'euclidean')
     p, q, C, phi = mpt.dtwC(Y, 0.1)
     mpt.DistMatPlot(Y, savefig_comp, name=dataset[subject], flag='compare', save_flag=sflag)
     mpt.DistMatPlot(Y, savefig_dtw, q, p, name=dataset[subject], flag='DTW', save_flag=sflag)
