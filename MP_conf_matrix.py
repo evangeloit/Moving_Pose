@@ -18,11 +18,11 @@ import matplotlib.pyplot as plt
 
 # dataset = ['mhad_s01_a04', 'mhad_s02_a04', 'mhad_s03_a04','mhad_s04_a04'\
 #             ,'mhad_s05_a04', 'mhad_s06_a04', 'mhad_s07_a04','mhad_s08_a04','mhad_s09_a01','mhad_s10_a04', 'mhad_s11_a04', 'mhad_s12_a04']
-dataset_s1 = ['mhad_s01_a01', 'mhad_s01_a02', 'mhad_s01_a03','mhad_s01_a04',\
-          'mhad_s01_a05', 'mhad_s01_a06','mhad_s01_a07','mhad_s01_a08',\
-          'mhad_s01_a09', 'mhad_s01_a10', 'mhad_s01_a11','mhad_s06_a01',\
+dataset_s1 = ['mhad_s01_a02', 'mhad_s01_a03','mhad_s01_a04',\
+          'mhad_s01_a05', 'mhad_s01_a06',\
+          'mhad_s01_a09',\
             'mhad_s06_a02', 'mhad_s06_a03','mhad_s06_a04', 'mhad_s06_a05',\
-          'mhad_s06_a06','mhad_s06_a07','mhad_s06_a08','mhad_s06_a09', 'mhad_s06_a10', 'mhad_s06_a11']
+          'mhad_s06_a06','mhad_s06_a09']
 
 # dataset_s6 = ['mhad_s06_a01','mhad_s06_a02', 'mhad_s06_a03','mhad_s06_a04', 'mhad_s06_a05',\
 #           'mhad_s06_a06','mhad_s06_a07','mhad_s06_a08','mhad_s06_a09', 'mhad_s06_a10', 'mhad_s06_a11']
@@ -38,13 +38,13 @@ t = (((w - 1) / 2) - 0.5) / sigma  # truncate
 StartFrame = 2  # Start from 3rd Frame's 3D coordinates
 
 # Similarity Matrix -- save Figure path
-savefig_sim = os.getcwd() + "/plots/conf_matrix/MP_sim_mat"
+savefig_sim = os.getcwd() + "/plots/conf_matrix/MP_sim_mat/"
 
 # Compare one set with all the other datasets -- save Figure path
-savefig_comp = os.getcwd() + "/plots/conf_matrix/MP_comp_mat"
+savefig_comp = os.getcwd() + "/plots/conf_matrix/MP_comp_mat/"
 
 # DTW figures path
-savefig_dtw = os.getcwd() + "/plots/conf_matrix/dtw_res_conf"
+savefig_dtw = os.getcwd() + "/plots/conf_matrix/dtw_res_conf/"
 
 # sflag =  0 : Turn off plots , 1: save figures to path
 sflag = 1
@@ -60,8 +60,8 @@ for name in dataset_s1:
     ## Load data from Json ##
     dataPoints, dataLim = mpt.load_data(input_dir, dataset_dir)
 
-    init_frame = 0 # dataLim['limits'][0]
-    last_frame = 60 # dataLim['limits'][1]
+    init_frame = 0#dataLim['limits'][0]
+    last_frame = 190#dataLim['limits'][1]
 
     ##### Create 3D points array #####
 
@@ -89,19 +89,20 @@ for fv in range(0, len(fv_new)):
     mpt.DistMatPlot(sim_f_v, savefig_sim, name=dataset_s1[fv], flag='similarity', save_flag=sflag)
 
 
-score = np.empty((len(dataset_s1), len(dataset_s1)), np.dtype(np.float32))
+score = np.empty((len(dataset_s1)/2, len(dataset_s1)/2), np.dtype(np.float32))
 count = 0
 ## Comparison of s01a03 Feat Vector with the all the other datasets Feat_Vecs ####
 
 for subject1 in range(0, len(dataset_s1)/2):
     for subject6 in range(0, len(dataset_s1)/2):
 
-        Y = cdist(fv_new[subject1], fv_new[subject6+11], 'euclidean')
+        Y = cdist(fv_new[subject1], fv_new[subject6+(len(dataset_s1)/2)], 'euclidean')
         p, q, C, phi = mpt.dtwC(Y, 0.1)
-        mpt.DistMatPlot(Y, savefig_comp, name=dataset_s1[subject1]+'/'+dataset_s1[subject6+11], flag='compare', save_flag=sflag)
-        mpt.DistMatPlot(Y, savefig_dtw, q, p, name=dataset_s1[subject1]+'/'+dataset_s1[subject6+11], flag='DTW', save_flag=sflag)
+        mpt.DistMatPlot(Y, savefig_comp, name=dataset_s1[subject1]+"||"+dataset_s1[subject6+(len(dataset_s1)/2)], flag='compare', save_flag=sflag)
+        mpt.DistMatPlot(Y, savefig_dtw, q, p, name=dataset_s1[subject1]+"||"+dataset_s1[subject6+(len(dataset_s1)/2)], flag='DTW', save_flag=sflag)
         #Scores of DTW for every subject
-        score[subject1][subject6] = C[-1, -1]
+        print(len(Y))
+        score[subject1][subject6] = C[-1, -1]/len(Y)
 
 print()
 
