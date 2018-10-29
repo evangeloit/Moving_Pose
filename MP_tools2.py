@@ -111,7 +111,7 @@ def MovPoseDescriptor(p3d_gauss, StartFrame):
     z = np.matlib.repmat(z, 4, 1)
     feat_vec = np.vstack((f_v, z))
 
-    # print(feat_vec.shape)
+    print(feat_vec.shape)
     return feat_vec, vec, acc
 
 
