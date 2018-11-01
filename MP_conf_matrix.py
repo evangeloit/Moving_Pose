@@ -22,7 +22,7 @@ from heatmap import annotate_heatmap
 #             ,'mhad_s05_a04', 'mhad_s06_a04', 'mhad_s07_a04','mhad_s08_a04','mhad_s09_a01','mhad_s10_a04', 'mhad_s11_a04', 'mhad_s12_a04']
 dataset_s1 = ['mhad_s01_a01','mhad_s01_a02', 'mhad_s01_a03','mhad_s01_a04',\
           'mhad_s01_a05', 'mhad_s01_a06','mhad_s01_a07','mhad_s01_a08',\
-          'mhad_s01_a09','mhad_s01_a10','mhad_s01_a11',\
+          'mhad_s01_a09','mhad_s01_a10','mhad_s01_a11','mhad_s06_a01',\
             'mhad_s06_a02', 'mhad_s06_a03','mhad_s06_a04', 'mhad_s06_a05',\
           'mhad_s06_a06','mhad_s06_a07','mhad_s06_a08','mhad_s06_a09','mhad_s06_a10','mhad_s06_a11']
 
@@ -92,22 +92,44 @@ for fv in range(0, len(fv_new)):
 
 
 score = np.empty((len(dataset_s1)/2, len(dataset_s1)/2), np.dtype(np.float32))
-count = 0
+
 ## Comparison of s01a03 Feat Vector with the all the other datasets Feat_Vecs ####
 
 for subject1 in range(0, len(dataset_s1)/2):
     for subject6 in range(0, len(dataset_s1)/2):
-
+        dsteps = 0
         Y = cdist(fv_new[subject1], fv_new[subject6+(len(dataset_s1)/2)], 'euclidean')
         p, q, C, phi = mpt.dtwC(Y, 0.1)
+
+        # Sum of diagonal steps
+        dsteps = 0
+        for r in range(0, len(q)-1):
+            qdot = abs(q[r] - q[r+1])
+            pdot = abs(p[r] - p[r+1])
+            s = qdot + pdot
+            if s==2:
+                dsteps = dsteps +1
+                # print(dsteps)
+
         mpt.DistMatPlot(Y, savefig_comp, name=dataset_s1[subject1]+"||"+dataset_s1[subject6+(len(dataset_s1)/2)], flag='compare', save_flag=sflag)
         mpt.DistMatPlot(Y, savefig_dtw, q, p, name=dataset_s1[subject1]+"||"+dataset_s1[subject6+(len(dataset_s1)/2)], flag='DTW', save_flag=sflag)
+
         #Scores of DTW for every subject
-        print(len(Y))
-        score[subject1][subject6] = (C[-1, -1]/(Y.shape[0]+Y.shape[1]))/100
+        score[subject1][subject6] = (C[-1, -1]/(Y.shape[0]+Y.shape[1]))
+        # score[subject1][subject6] = C[-1, -1]/dsteps
+
+
+#mis/classification Score %
+Pscore = ((score/np.amax(score))*100).copy()
+Pmin = np.argmin(Pscore, axis=1)
+Pvec = np.arange(0,len(Pmin))
+m = Pmin == Pvec
+mnot= Pmin != Pvec
+
+missclass = np.sum(mnot.astype(int))
+class_score = (np.sum(m.astype(int),dtype=float)/len(Pscore))*100
 
 # Confusion Matrix
-
 # actionsS1 = ["A02","A03","A04","A05","A06","A09"]
 # actionsS6 = ["A02","A03","A04","A05","A06","A09"]
 
@@ -117,33 +139,16 @@ actionsS6 = ["A01","A02","A03","A04","A05","A06","A07","A08","A09","A10","A11"]
 fig, ax = plt.subplots()
 ax.set_xlabel('S06')
 ax.set_ylabel('S01')
-ax.xaxis.set_label_position('top')
+# ax.xaxis.set_label_position('top')
 
-im, cbar = heatmap(score, actionsS1, actionsS6,ax=ax,
+im, cbar = heatmap(Pscore, actionsS1, actionsS6,ax=ax,
                    cmap=None, cbarlabel="Score")
 
 texts = annotate_heatmap(im, valfmt="{x:.1f} ")
-
+plt.title('Classification Score = '+ str(class_score.round(decimals=2))+'%\nmisclassified='+str(missclass))
 plt.rcParams.update({'font.size': 13})
-
 fig.tight_layout()
 plt.show()
 
 print()
 
-#
-# score = np.empty((len(dataset_s1),len(dataset_s6)), np.dtype(np.float32))
-# count = 0
-# ## Comparison of s01a03 Feat Vector with the all the other datasets Feat_Vecs ####
-#
-# for subject1 in range(0, len(dataset_s1)):
-#     for subject6 in range(0, len(dataset_s6)):
-#
-#         Y = cdist(fv_new[subject1], fv_new[subject6], 'euclidean')
-#         p, q, C, phi = mpt.dtwC(Y, 0.1)
-#         mpt.DistMatPlot(Y, savefig_comp, name=dataset_s1[subject1]+'/'+dataset_s6[subject6], flag='compare', save_flag=sflag)
-#         mpt.DistMatPlot(Y, savefig_dtw, q, p, name=dataset_s1[subject1]+'/'+dataset_s6[subject6], flag='DTW', save_flag=sflag)
-#         #Scores of DTW for every subject
-#         score[subject1][subject6] = C[-1, -1]
-#
-# print()

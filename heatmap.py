@@ -41,11 +41,11 @@ def heatmap(data, row_labels, col_labels, ax=None,
     ax.set_yticklabels(row_labels)
 
     # Let the horizontal axes labeling appear on top.
-    ax.tick_params(top=True, bottom=False,
-                   labeltop=True, labelbottom=False)
+    ax.tick_params(top=False, bottom=True,
+                   labeltop=False, labelbottom=True)
 
     # Rotate the tick labels and set their alignment.
-    plt.setp(ax.get_xticklabels(), rotation=-30, ha="right",
+    plt.setp(ax.get_xticklabels(), rotation=30, ha="right",
              rotation_mode="anchor")
 
     # Turn spines off and create white grid.
