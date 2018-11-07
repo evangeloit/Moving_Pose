@@ -4,6 +4,7 @@ from scipy.ndimage import gaussian_filter1d
 import matplotlib.pyplot as plt
 import dpcore
 import os
+from munkres import Munkres # Optimization Algorithm(Hungarian Algo) / find the global minimum
 
 def load_data(input_dir, dataset_dir):
 
@@ -133,7 +134,7 @@ def dtwC(dist_mat, penalty):
     p, q, C, phi = dpcore.dp(dist_mat, penalty=penalty)
     return p, q, C, phi
 
-def DistMatPlot(f_v, path, q=None, p=None, name=None, flag=None, save_flag=None):
+def DistMatPlot(f_v, path, q=None, p=None,dtwscore=None, name=None, flag=None, save_flag=None):
 
     if save_flag == 1:
 
@@ -154,13 +155,13 @@ def DistMatPlot(f_v, path, q=None, p=None, name=None, flag=None, save_flag=None)
             my_file = name + '_comp_mat'
             plt.title('Distance Matrix\n Comparison ' + name)
         elif flag == 'DTW':
-            ax.imshow(f_v, interpolation='nearest', cmap='binary')
+            # ax.imshow(f_v, interpolation='nearest', cmap='binary')
             ax.hold(True)
             ax.plot(q, p, '-r')
             ax.hold(False)
             ax.autoscale(enable=True, axis='both', tight=True)
             my_file = name + '_dtw_path'
-            plt.title('DTW\n Moving Pose Descriptor')
+            plt.title('MP - DTW Score: '+str(dtwscore))
 
         plt.close('all')
         # print(goal_dir + my_file)
@@ -170,3 +171,20 @@ def DistMatPlot(f_v, path, q=None, p=None, name=None, flag=None, save_flag=None)
     else:
         print('Passing Plot...')
         pass
+
+def Optimize(score):
+
+    matrix = score.copy()
+    murk = Munkres()
+    matrix[5][5]=20000
+    indexes = murk.compute(matrix)
+    # print (matrix, 'Lowest cost through this matrix:')
+    total = 0
+
+    for row, column in indexes:
+        value = matrix[row][column]
+        total += value
+        print '(%d, %d) -> %d' % (row, column, value)
+        print 'total cost: %d' % total
+
+    return indexes

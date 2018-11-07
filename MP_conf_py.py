@@ -15,19 +15,21 @@ import dpcore #dtw c
 import matplotlib.pyplot as plt
 from heatmap import heatmap
 from heatmap import annotate_heatmap
+from munkres import Munkres
+
+
 
 # Controllers
 
 # dataset = ['mhad_s01_a04', 'mhad_s02_a04', 'mhad_s03_a04','mhad_s04_a04'\
 #             ,'mhad_s05_a04', 'mhad_s06_a04', 'mhad_s07_a04','mhad_s08_a04','mhad_s09_a01','mhad_s10_a04', 'mhad_s11_a04', 'mhad_s12_a04']
-dataset_s1 = ['mhad_s01_a01','mhad_s01_a02', 'mhad_s01_a03','mhad_s01_a04',\
-          'mhad_s01_a05', 'mhad_s01_a06','mhad_s01_a07','mhad_s01_a08',\
-          'mhad_s01_a09','mhad_s01_a10','mhad_s01_a11','mhad_s06_a01',\
-            'mhad_s06_a02', 'mhad_s06_a03','mhad_s06_a04', 'mhad_s06_a05',\
-          'mhad_s06_a06','mhad_s06_a07','mhad_s06_a08','mhad_s06_a09','mhad_s06_a10','mhad_s06_a11']
+# dataset_s1 = ['mhad_s06_a11','mhad_s06_a09','mhad_s01_a11','mhad_s01_a09']
+# dataset_s1 = ['mhad_s01_a09','mhad_s01_a11','mhad_s06_a09','mhad_s06_a11']
 
-# dataset_s6 = ['mhad_s06_a01','mhad_s06_a02', 'mhad_s06_a03','mhad_s06_a04', 'mhad_s06_a05',\
-#           'mhad_s06_a06','mhad_s06_a07','mhad_s06_a08','mhad_s06_a09', 'mhad_s06_a10', 'mhad_s06_a11']
+dataset_s1 = ['mhad_s01_a01','mhad_s01_a02', 'mhad_s01_a03','mhad_s01_a04', 'mhad_s01_a05',\
+          'mhad_s01_a06','mhad_s01_a07','mhad_s01_a08','mhad_s01_a09', 'mhad_s01_a10', \
+              'mhad_s01_a11','mhad_s06_a01','mhad_s06_a02', 'mhad_s06_a03','mhad_s06_a04', 'mhad_s06_a05',\
+          'mhad_s06_a06','mhad_s06_a07','mhad_s06_a08','mhad_s06_a09', 'mhad_s06_a10', 'mhad_s06_a11']
 
 model_name = 'mh_body_male_customquat'
 
@@ -109,30 +111,54 @@ for subject1 in range(0, len(dataset_s1)/2):
             s = qdot + pdot
             if s==2:
                 dsteps = dsteps +1
-                # print(dsteps)
-
-        mpt.DistMatPlot(Y, savefig_comp, name=dataset_s1[subject1]+"||"+dataset_s1[subject6+(len(dataset_s1)/2)], flag='compare', save_flag=sflag)
-        mpt.DistMatPlot(Y, savefig_dtw, q, p, name=dataset_s1[subject1]+"||"+dataset_s1[subject6+(len(dataset_s1)/2)], flag='DTW', save_flag=sflag)
+               # print(dsteps)
 
         #Scores of DTW for every subject
-        score[subject1][subject6] = (C[-1, -1]/((Y.shape[0]+Y.shape[1]))+dsteps)
+        score[subject1][subject6] = (C[-1, -1]/((Y.shape[0]+Y.shape[1])))
         # score[subject1][subject6] = C[-1, -1]/dsteps
+
+        mpt.DistMatPlot(Y, savefig_comp, name=dataset_s1[subject1]+"_"+dataset_s1[subject6+(len(dataset_s1)/2)], flag='compare', save_flag=sflag)
+        mpt.DistMatPlot(Y, savefig_dtw, q, p, dtwscore=score[subject1][subject6],name=dataset_s1[subject1]+"_"+dataset_s1[subject6+(len(dataset_s1)/2)], flag='DTW', save_flag=sflag)
+
 
 
 #mis/classification Score %
-Pscore = ((score/np.amax(score))*100).copy()
-Pmin = np.argmin(Pscore, axis=1)
-Pvec = np.arange(0,len(Pmin))
-m = Pmin == Pvec
-mnot= Pmin != Pvec
+# Pscore = ((score/np.amax(score))*100).copy()
+Pminrow = np.argmin(score, axis=1)# axis=1 row min
+Pmincol = np.argmin(score, axis=0)# axis=1 col min
 
-missclass = np.sum(mnot.astype(int))
-class_score = (np.sum(m.astype(int),dtype=float)/len(Pscore))*100
+Pvec = np.arange(0, len(Pminrow))
+mrow = Pminrow == Pvec
+mcol = Pmincol == np.transpose(Pvec)
+mcol = mcol.astype(int)
+mrow = mrow.astype(int)
+mtot = mcol + mrow
+
+mnotr= Pminrow != Pvec
+mnotc= Pmincol != np.transpose(Pvec)
+
+# missclass = np.sum(mnotr.astype(int)+mnotc.astype(int))
+# class_score = (np.sum(mtot.astype(int),dtype=float)/(2*len(score)))*100
+
+#Optimization -Best Assignemt
+# indexes = mpt.Optimize(score)
+indexes = np.array(mpt.Optimize(score))
+truth_index = np.transpose(np.array(np.diag_indices(11)))
+
+count = 0
+for rr in range(0,indexes.shape[0]):
+        if truth_index[rr][0] == indexes[rr][0] and truth_index[rr][1] == indexes[rr][1] :
+            count = count+1
+            print(count)
+# print(indexes.shape[0])
+missclass = float((indexes.shape[0] - count)/2)
+class_score = float((indexes.shape[0] -missclass)/indexes.shape[0])*100
+print(class_score)
 
 # Confusion Matrix
-# actionsS1 = ["A02","A03","A04","A05","A06","A09"]
-# actionsS6 = ["A02","A03","A04","A05","A06","A09"]
-
+# actionsS1 = ["A11","A09"]
+# actionsS6 = ["A11","A09"]
+#
 actionsS1 = ["A01","A02","A03","A04","A05","A06","A07","A08","A09","A10","A11"]
 actionsS6 = ["A01","A02","A03","A04","A05","A06","A07","A08","A09","A10","A11"]
 
@@ -141,14 +167,17 @@ ax.set_xlabel('S06')
 ax.set_ylabel('S01')
 # ax.xaxis.set_label_position('top')
 
-im, cbar = heatmap(Pscore, actionsS1, actionsS6,ax=ax,
+im, cbar = heatmap(score, actionsS1, actionsS6,ax=ax,
                    cmap=None, cbarlabel="Score")
 
 texts = annotate_heatmap(im, valfmt="{x:.2f} ")
-plt.title('Classification Score = '+ str(class_score.round(decimals=2))+'%\nmisclassified='+str(missclass))
+
+plt.plot(indexes[:,0], indexes[:,1],'ro')
+# plt.title('Classification Score = '+ str(class_score.round(decimals=2))+'%\nmisclassified='+str(missclass))
+plt.title('Classification Score = '+ str(round(class_score,2))+'%\nmisclassified='+str(missclass))
 plt.rcParams.update({'font.size': 13})
 fig.tight_layout()
 plt.show()
 
 print()
-
+#
