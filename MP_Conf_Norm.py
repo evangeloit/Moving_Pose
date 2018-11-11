@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 from heatmap import heatmap
 from heatmap import annotate_heatmap
 from munkres import Munkres
-
+from sklearn.metrics import confusion_matrix
 
 
 # Controllers
@@ -121,12 +121,11 @@ for subject1 in range(0, len(dataset_s1)/2):
         mpt.DistMatPlot(Y, savefig_dtw, q, p, dtwscore=score[subject1][subject6],name=dataset_s1[subject1]+"_"+dataset_s1[subject6+(len(dataset_s1)/2)], flag='DTW', save_flag=sflag)
 
 
+#min of rows /min col - class Score %
 
-#mis/classification Score %
 # Pscore = ((score/np.amax(score))*100).copy()
-Pminrow = np.argmin(score, axis=1)# axis=1 row min
-Pmincol = np.argmin(score, axis=0)# axis=1 col min
-
+Pminrow = np.argmin(score, axis=1)# axis=1 row min index
+Pmincol = np.argmin(score, axis=0)# axis=0 col min index
 Pvec = np.arange(0, len(Pminrow))
 mrow = Pminrow == Pvec
 mcol = Pmincol == np.transpose(Pvec)
@@ -137,47 +136,63 @@ mtot = mcol + mrow
 mnotr= Pminrow != Pvec
 mnotc= Pmincol != np.transpose(Pvec)
 
-# missclass = np.sum(mnotr.astype(int)+mnotc.astype(int))
-# class_score = (np.sum(mtot.astype(int),dtype=float)/(2*len(score)))*100
-
-#Optimization -Best Assignemt
-# indexes = mpt.Optimize(score)
-indexes = np.array(mpt.Optimize(score))
-truth_index = np.transpose(np.array(np.diag_indices(11)))
-
-count = 0
-for rr in range(0,indexes.shape[0]):
-        if truth_index[rr][0] == indexes[rr][0] and truth_index[rr][1] == indexes[rr][1] :
-            count = count+1
-            print(count)
-# print(indexes.shape[0])
-missclass = float((indexes.shape[0] - count)/2)
-class_score = float((indexes.shape[0] -missclass)/indexes.shape[0])*100
+missclass = np.sum(mnotr.astype(int)+mnotc.astype(int))
+print(missclass)
+class_score = (np.sum(mtot.astype(int),dtype=float)/(2*len(score)))*100
 print(class_score)
 
-# Confusion Matrix
-# actionsS1 = ["A11","A09"]
-# actionsS6 = ["A11","A09"]
+
+#Optimization -Best Assignemt -class score%
+
+# indexes = mpt.Optimize(score)
+# indexes = np.array(mpt.Optimize(score))
+# truth_index = np.transpose(np.array(np.diag_indices(11)))
 #
-actionsS1 = ["A01","A02","A03","A04","A05","A06","A07","A08","A09","A10","A11"]
-actionsS6 = ["A01","A02","A03","A04","A05","A06","A07","A08","A09","A10","A11"]
+# match = 0
+# for rr in range(0,indexes.shape[0]):
+#         if truth_index[rr][0] == indexes[rr][0] and truth_index[rr][1] == indexes[rr][1] :
+#             match = match+1
+#
+# print(match)
+# missclass = float((indexes.shape[0] - match)/2)
+# class_score = float((indexes.shape[0] -missclass)/indexes.shape[0])*100
+#
 
-fig, ax = plt.subplots()
-ax.set_xlabel('S06')
-ax.set_ylabel('S01')
-# ax.xaxis.set_label_position('top')
+#Conf Matrix MP_tools
+actions = ["A01","A02","A03","A04","A05","A06","A07","A08","A09","A10","A11"]
+axlabel = ['S06','S01'] # [x,y]
+mpt.plot_confusion_matrix(score, classes=actions, normalize=True, title='confusion matrix',axs=axlabel)
 
-im, cbar = heatmap(score, actionsS1, actionsS6,ax=ax,
-                   cmap=None, cbarlabel="Score")
-
-texts = annotate_heatmap(im, valfmt="{x:.2f} ")
-
-plt.plot(indexes[:,0], indexes[:,1],'ro')
-# plt.title('Classification Score = '+ str(class_score.round(decimals=2))+'%\nmisclassified='+str(missclass))
-plt.title('Classification Score = '+ str(round(class_score,2))+'%\nmisclassified='+str(missclass))
+# plt.plot(indexes[:,0], indexes[:,1],'ro')
+plt.title('Classification Score = '+ str(round(class_score,2))+'%\nmisclassified='+str(int(missclass)))
 plt.rcParams.update({'font.size': 13})
-fig.tight_layout()
+plt.tight_layout()
 plt.show()
 
-print()
+
+# # Confusion Matrix
+# # actionsS1 = ["A11","A09"]
+# # actionsS6 = ["A11","A09"]
+# #
+# actionsS1 = ["A01","A02","A03","A04","A05","A06","A07","A08","A09","A10","A11"]
+# actionsS6 = ["A01","A02","A03","A04","A05","A06","A07","A08","A09","A10","A11"]
 #
+# fig, ax = plt.subplots()
+# ax.set_xlabel('S06')
+# ax.set_ylabel('S01')
+# # ax.xaxis.set_label_position('top')
+#
+# im, cbar = heatmap(score, actionsS1, actionsS6,ax=ax,
+#                    cmap=None, cbarlabel="Score")
+#
+# texts = annotate_heatmap(im, valfmt="{x:.2f} ")
+#
+
+# # plt.title('Classification Score = '+ str(class_score.round(decimals=2))+'%\nmisclassified='+str(missclass))
+# plt.title('Classification Score = '+ str(round(class_score,2))+'%\nmisclassified='+str(int(missclass)))
+# plt.rcParams.update({'font.size': 13})
+# fig.tight_layout()
+# plt.show()
+#
+# print()
+

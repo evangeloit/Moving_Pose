@@ -10,14 +10,19 @@
 import numpy as np
 from scipy.spatial.distance import pdist, squareform, cdist
 import os
-import MP_tools2 as mpt
+import Moving_Pose_Descriptor.MP_tools2 as mpt
 import dpcore #dtw c
 import matplotlib.pyplot as plt
 
 # Controllers
 
-dataset = ['mhad_s01_a04', 'mhad_s02_a04', 'mhad_s03_a04','mhad_s04_a04'\
-            ,'mhad_s05_a04', 'mhad_s06_a04', 'mhad_s07_a04','mhad_s08_a04','mhad_s09_a01','mhad_s10_a04', 'mhad_s11_a04', 'mhad_s12_a04']
+# dataset = ['mhad_s01_a04', 'mhad_s02_a04', 'mhad_s03_a04','mhad_s04_a04'\
+#             ,'mhad_s05_a04', 'mhad_s06_a04', 'mhad_s07_a04','mhad_s08_a04','mhad_s09_a01','mhad_s10_a04', 'mhad_s11_a04', 'mhad_s12_a04']
+dataset = ['mhad_s01_a01', 'mhad_s01_a02', 'mhad_s01_a03','mhad_s01_a04',\
+          'mhad_s01_a05', 'mhad_s01_a06','mhad_s01_a07','mhad_s01_a08',\
+          'mhad_s01_a09', 'mhad_s01_a10', 'mhad_s01_a11','mhad_s06_a01',\
+          'mhad_s06_a02', 'mhad_s06_a03','mhad_s06_a04', 'mhad_s06_a05',\
+          'mhad_s06_a06','mhad_s06_a07','mhad_s06_a08','mhad_s06_a09', 'mhad_s06_a10', 'mhad_s06_a11']
 
 model_name = 'mh_body_male_customquat'
 
@@ -52,8 +57,8 @@ for name in dataset:
     ## Load data from Json ##
     dataPoints, dataLim = mpt.load_data(input_dir, dataset_dir)
 
-    init_frame = dataLim['limits'][0]
-    last_frame = dataLim['limits'][1]
+    init_frame = 0 # dataLim['limits'][0]
+    last_frame = 110 # dataLim['limits'][1]
 
     ##### Create 3D points array #####
 
@@ -81,11 +86,15 @@ for name in dataset:
 # Feature Vector Array for all datasets
 fv_new = np.array(FV_new)
 
+score = np.empty((len(dataset)), np.dtype(np.float32))
+count = 0
 ## Comparison of s01a03 Feat Vector with the all the other datasets Feat_Vecs ####
 for subject in range(0, len(dataset)):
-    Y = cdist(fv_new[4], fv_new[subject], 'euclidean')
+    Y = cdist(fv_new[subject], fv_new[subject+11], 'euclidean')
     p, q, C, phi = mpt.dtwC(Y, 0.1)
     mpt.DistMatPlot(Y, savefig_comp, name=dataset[subject], flag='compare', save_flag=sflag)
     mpt.DistMatPlot(Y, savefig_dtw, q, p, name=dataset[subject], flag='DTW', save_flag=sflag)
+    #Scores of DTW for every subject
+    score[subject] = C[-1, -1]
 
 print()

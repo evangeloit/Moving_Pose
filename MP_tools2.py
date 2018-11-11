@@ -5,6 +5,7 @@ import matplotlib.pyplot as plt
 import dpcore
 import os
 from munkres import Munkres # Optimization Algorithm(Hungarian Algo) / find the global minimum
+import itertools
 
 def load_data(input_dir, dataset_dir):
 
@@ -169,14 +170,25 @@ def DistMatPlot(f_v, path, q=None, p=None,dtwscore=None, name=None, flag=None, s
 
 
     else:
-        print('Passing Plot...')
+        # print('Passing Plot...')
         pass
 
 def Optimize(score):
-
+    """
+    The Munkres module provides an implementation of the Munkres algorithm
+    (also called the Hungarian algorithm or the Kuhn-Munkres algorithm),
+    useful for solving the Assignment Problem.
+    Use it to compute the lowest cost assignment from a cost matrix.
+    """
     matrix = score.copy()
+    # matrix[10][10]= 100000
+    # matrix[1][1]= 500000
+    # matrix[6][4]= 80000000
+    # matrix[6][6]= 800000
+    # matrix[9][4]= 400000
+    # matrix[8][8]= 10000000
+    # matrix[4][4]= 1000000000
     murk = Munkres()
-    matrix[5][5]=20000
     indexes = murk.compute(matrix)
     # print (matrix, 'Lowest cost through this matrix:')
     total = 0
@@ -188,3 +200,46 @@ def Optimize(score):
         print 'total cost: %d' % total
 
     return indexes
+
+def plot_confusion_matrix(cm, classes,
+                          normalize=False,
+                          title='Confusion matrix',
+                          axs=None,
+                          cbarlabel='Score',
+                          cmap='jet'):
+    # plt.cm.Blues
+    """
+    This function prints and plots the confusion matrix.
+    Normalization can be applied by setting `normalize=True`.
+    """
+    fig, ax = plt.subplots()
+    if normalize:
+        cm = cm.astype('float') / cm.sum(axis=1)[:, np.newaxis]
+        print("Normalized confusion matrix")
+    else:
+        print('Confusion matrix, without normalization')
+
+    # print(cm)
+
+    im = ax.imshow(cm, interpolation='nearest', cmap=cmap)
+    plt.title(title)
+    # Create colorbar
+    cbar = ax.figure.colorbar(im)
+    cbar.ax.set_ylabel(cbarlabel, rotation=-90, va="bottom")
+
+    tick_marks = np.arange(len(classes))
+    plt.xticks(tick_marks, classes, rotation=45)
+    plt.yticks(tick_marks, classes)
+
+    fmt = '.3f' if normalize else '2.1f'
+    thresh = cm.max() / 2.
+    for i, j in itertools.product(range(cm.shape[0]), range(cm.shape[1])):
+        plt.text(j, i, format(cm[i, j], fmt),
+                 horizontalalignment="center",
+                 color="white" if cm[i, j] > thresh else "black")
+
+    plt.ylabel(axs[1])
+    plt.xlabel(axs[0])
+    plt.tight_layout()
+
+    return cbar
