@@ -161,7 +161,7 @@ print(class_score)
 #Conf Matrix MP_tools
 actions = ["A01","A02","A03","A04","A05","A06","A07","A08","A09","A10","A11"]
 axlabel = ['S06','S01'] # [x,y]
-mpt.plot_confusion_matrix(score, classes=actions, normalize=True, title='confusion matrix',axs=axlabel)
+mpt.plot_confusion_matrix(score, classes=actions, normalize=False, title='confusion matrix',axs=axlabel)
 
 # plt.plot(indexes[:,0], indexes[:,1],'ro')
 plt.title('Classification Score = '+ str(round(class_score,2))+'%\nmisclassified='+str(int(missclass)))
