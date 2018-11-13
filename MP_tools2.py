@@ -296,15 +296,16 @@ def move_rename(top_path, topf, childf=None,rename=None):
             # Move Files
             for num in range(0, len(src)):
                 for filename in listdir(join(dstn[num], subdir_names[0])):
-                    # print(filename)
                     move(join(src[num], filename), join(dstn[num], ''))
+                    print(filename)
 
             # Remove Empty dirs
-            for num2 in range(0, len(src)):
-                sub_folders_pathname = src[num2]
-                sub_folders_list = glob.glob(sub_folders_pathname)
-                for sub_folder in sub_folders_list:
-                    shutil.rmtree(sub_folder)
+        for num2 in range(0, len(src)):
+            sub_folders_pathname = src[num2]
+            print(sub_folders_pathname)
+            sub_folders_list = glob.glob(sub_folders_pathname)
+            for sub_folder in sub_folders_list:
+                shutil.rmtree(sub_folder)
 
 
 
