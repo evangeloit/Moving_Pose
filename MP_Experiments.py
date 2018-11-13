@@ -8,12 +8,12 @@ import re
 
 import Moving_Pose_Descriptor.MP_tools2 as mpt
 
-topf = ['S03']
-childf = ['R05']
-# top_path = '/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/'
-top_path = '/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/data/'
+topf = ['S007', 'S008', 'S009']
+childf = ['R01']
+top_path = '/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/'
+# top_path = '/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/data/'
 
-mpt.move_dir(top_path,topf,childf=childf)
+mpt.move_rename(top_path,topf,childf=childf, rename='mhad')
 # os.chdir(top_path)
 #
 #

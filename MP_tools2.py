@@ -255,16 +255,19 @@ def plot_confusion_matrix(cm, classes,
 
 
 
-def move_dir(top_path, topf, childf=None):
+def move_rename(top_path, topf, childf=None,rename=None):
     """
         This function moves files from a child folder to a
-        parent folder inside a top folder. top-->parent-->child
+        parent folder inside a top folder. top-->parent-->child.
+        Function can rename the parent folder using the 'rename'
+        parameter.
 
         ==Inputs==
 
         top_path : path out of "top" folder/s
         topf : List of "top" folder/s name/s
         childf : List of "child" folder/s name/s that contains all the files
+        rename: String for parent folder/s name/s
     """
     os.chdir(top_path)
 
@@ -276,44 +279,55 @@ def move_dir(top_path, topf, childf=None):
         src = []
         dstn = []
 
-        # Make source and destenation dirs
+        # Find source and dest dirs
         for f in filelist:
             dest = os.path.join(path, f)
             dstn.append(dest)
             for file in listdir(dest):
                 source = os.path.join(dest, file)
                 for n in subdir_names:
-                    if n in file: src.append(source)
-        # Move Files
-        # print(src)
-        for num in range(0, len(src)):
-            for filename in listdir(join(dstn[num], subdir_names[0])):
-                # print(filename)
-                move(join(src[num], filename), join(dstn[num], ''))
+                    if n in file:
+                        src.append(source)
+                        flag = True
+                    else:
+                        flag = False
+                        # break
+        if flag:
+            # Move Files
+            for num in range(0, len(src)):
+                for filename in listdir(join(dstn[num], subdir_names[0])):
+                    # print(filename)
+                    move(join(src[num], filename), join(dstn[num], ''))
 
-        # Remove Empty dirs
-        for num2 in range(0, len(src)):
-            sub_folders_pathname = src[num2]
-            sub_folders_list = glob.glob(sub_folders_pathname)
-            for sub_folder in sub_folders_list:
-                shutil.rmtree(sub_folder)
+            # Remove Empty dirs
+            for num2 in range(0, len(src)):
+                sub_folders_pathname = src[num2]
+                sub_folders_list = glob.glob(sub_folders_pathname)
+                for sub_folder in sub_folders_list:
+                    shutil.rmtree(sub_folder)
+
+
 
         # Rename Parent folders
-        for xt in os.listdir(path):
-            file_name, file_ext = os.path.splitext(xt)
+        if rename is not None:
+            for xt in os.listdir(path):
+                file_name, file_ext = os.path.splitext(xt)
 
-            # match = re.match(r"([A-Z]+)([0-9]+)", file_name, re.I)
-            # if match:
-            #     items = list(match.groups())
-            #
-            # # f_num = items[1]
-            # # f_word = items[0]
+                # match = re.match(r"([A-Z]+)([0-9]+)", file_name, re.I)
+                # if match:
+                #     items = list(match.groups())
+                #
+                # # f_num = items[1]
+                # # f_word = items[0]
 
-            dt_name = 'mhad'
 
-            # print('{}_{}_{}{}'.format(dt_name,topf[0].lower(),f_word.lower(),f_num))
-            new_name = '{}_{}_{}'.format(dt_name, name.lower(), file_name.lower())
-            # print(os.getcwd()+'/'+topf[0]+'/'+file_name)
-            os.rename((os.getcwd() + '/' + name + '/' + file_name), (os.getcwd() + '/' + name + '/' + new_name))
+                # print('{}_{}_{}{}'.format(rename,topf[0].lower(),f_word.lower(),f_num))
+                new_name = '{}_{}_{}'.format(rename, name.lower(), file_name.lower())
+                # print(os.getcwd()+'/'+topf[0]+'/'+file_name)
+                os.rename((os.getcwd() + '/' + name + '/' + file_name), (os.getcwd() + '/' + name + '/' + new_name))
 
-    print('===files moved to parent folder and parent folder is renamed===')
+    if rename is not None:
+        print('=== Parent folder is renamed ===')
+
+    if flag is not True:
+        print("No Childf with that name!!")
