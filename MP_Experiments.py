@@ -5,7 +5,7 @@ import Moving_Pose_Descriptor.MP_tools2 as mpt
 # top_path = '/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/'
 # top_path = '/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/data/'
 
-# mpt.move_rename(top_path,topf,childf=childf, rename='mhad')
+mpt.move_rename(top_path,topf,childf=childf, rename='mhad')
 
 
 
