@@ -4,7 +4,7 @@ from scipy.ndimage import gaussian_filter1d
 import matplotlib.pyplot as plt
 import dpcore
 
-from munkres import Munkres # Optimization Algorithm(Hungarian Algo) / find the global minimum
+from munkres import Munkres # Optimization Algorithm(Hungarian Algo) / finds the global minimum
 import itertools
 
 import os
@@ -190,12 +190,6 @@ def Optimize(score):
     """
     matrix = score.copy()
     # matrix[10][10]= 100000
-    # matrix[1][1]= 500000
-    # matrix[6][4]= 80000000
-    # matrix[6][6]= 800000
-    # matrix[9][4]= 400000
-    # matrix[8][8]= 10000000
-    # matrix[4][4]= 1000000000
     murk = Munkres()
     indexes = murk.compute(matrix)
     # print (matrix, 'Lowest cost through this matrix:')
@@ -268,6 +262,8 @@ def move_rename(top_path, topf, childf=None,rename=None):
         topf : List of "top" folder/s name/s
         childf : List of "child" folder/s name/s that contains all the files
         rename: String for parent folder/s name/s
+
+        !!! Script is not working for multiple childf in the parent folder!!!
     """
     os.chdir(top_path)
 
@@ -328,7 +324,7 @@ def move_rename(top_path, topf, childf=None,rename=None):
                 os.rename((os.getcwd() + '/' + name + '/' + file_name), (os.getcwd() + '/' + name + '/' + new_name))
 
     if rename is not None:
-        print('=== Parent folder is renamed ===')
+        print('=== Parent folders are renamed ===')
 
     if flag is not True:
         print("No Childf with that name!!")
