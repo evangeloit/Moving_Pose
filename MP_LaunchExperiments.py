@@ -9,7 +9,7 @@ experiments_path = os.path.join(package_path,experiments_exec)
 
 print(experiments_path)
 
-for i in range(8):
+for i in range(120):
     command_ = "python {0} {1} {2}".format(experiments_path, i, dry_run)
     print "Calling:", command_
     os.system(command_)

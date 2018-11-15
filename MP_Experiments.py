@@ -1,9 +1,10 @@
 import os
 import sys
 import itertools
-
+import Moving_Pose_Descriptor.DatasetsCreateJson as dtlist
 import PythonModel3dTracker.Paths as Paths
 import PythonModel3dTracker.PythonModelTracker.TrackingResults.ModelTrackingResults as MTR
+import json
 
 package_path = os.environ['mvpd']
 
@@ -27,7 +28,8 @@ objective_params = {
     'bgfg_type': 'depth'
 }
 
-
+#Datasets Path
+dtpath = '/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/data/'
 
 #Results Paths
 results_path = "Human_tracking/results_normal/"
@@ -53,19 +55,33 @@ results_cam_inv = "Human_tracking/results_camera_invariant/"
 #             'mhad_s12_a04'
 # ]
 
-model_names = ["mh_body_male_customquat","mh_body_male_customquat",
-               "mh_body_male_customquat","mh_body_male_customquat",
-               "mh_body_male_customquat","mh_body_male_customquat",
-               "mh_body_male_customquat"
-               ]
-# model_names = ["mh_body_male_customquat"]
+# model_names = ["mh_body_male_customquat","mh_body_male_customquat",
+#                "mh_body_male_customquat","mh_body_male_customquat",
+#                "mh_body_male_customquat","mh_body_male_customquat",
+#                "mh_body_male_customquat"
+#                ]
 
-datasets = [
-    'mhad_s03_a04','mhad_s06_a04',
-    'mhad_s12_a04','mhad_s11_a04',
-    'mhad_s05_a04','mhad_s02_a04',
-    'mhad_s10_a04'
-]
+
+# datasets = [
+#     'mhad_s03_a04','mhad_s06_a04',
+#     'mhad_s12_a04','mhad_s11_a04',
+#     'mhad_s05_a04','mhad_s02_a04',
+#     'mhad_s10_a04'
+# ]
+
+mod_name = ["mh_body_male_customquat"]
+# datasets = dtlist.datasets_list(dtpath)
+with open(os.path.join(os.environ['mvpd'],"dataset.json")) as f:
+    datasets = list(json.load(f))
+#take out specific actions
+
+k = len(datasets)
+model_names = mod_name * k
+
+print(model_names)
+print(datasets)
+print(len(model_names))
+print(len(datasets))
 
 #model_names = ["mh_body_male_customquat"] * len(datasets)
 #model_names = ["mh_body_male_custom"]

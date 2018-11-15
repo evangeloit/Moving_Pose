@@ -1,0 +1,16 @@
+{
+
+"datasets": [
+
+	{
+	    "name":"mhad_s01_a01",
+	    "path": "/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/data/S01/mhad_s01_a01.json"},
+
+	{
+	    "name":"mhad_s01_a02",
+	    "path": "/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/data/S01/mhad_s01_a01.json"}
+		
+
+	     ]
+
+}
