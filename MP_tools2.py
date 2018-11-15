@@ -328,3 +328,13 @@ def move_rename(top_path, topf, childf=None,rename=None):
 
     if flag is not True:
         print("No Childf with that name!!")
+
+def change_package(env_var):
+    """ Changes a package Path.Imports an env variable
+
+        inputs
+        env_var : List of strings with enviroment variables env_var = ['HOME','PATH']
+    """
+    new_pack = []
+    new_pack.append(env_var)
+    return new_pack
