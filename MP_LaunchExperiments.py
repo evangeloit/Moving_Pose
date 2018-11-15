@@ -1,16 +1,15 @@
 import os
 import PythonModel3dTracker.Paths as Paths
 
-os.chdir('/home/evangeloit/Desktop/GitBlit_Master/Moving_Pose_Descriptor')
+package_path = os.environ['mvpd'] #Moving Pose Descriptor Directory env variable
+
 dry_run = 0
 experiments_exec = 'MP_Experiments.py'
-experiments_path = os.path.join(os.getcwd(),experiments_exec)
+experiments_path = os.path.join(package_path,experiments_exec)
 
-print()
+print(experiments_path)
 
-for i in range(2):
+for i in range(8):
     command_ = "python {0} {1} {2}".format(experiments_path, i, dry_run)
     print "Calling:", command_
-    package = os.environ['mvpd']
-    print(package)
     os.system(command_)
