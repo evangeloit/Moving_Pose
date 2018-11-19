@@ -71,6 +71,8 @@ results_cam_inv = "Human_tracking/results_camera_invariant/"
 
 mod_name = ["mh_body_male_customquat"]
 # datasets = dtlist.datasets_list(dtpath)
+
+#Open mhad dataset jsonfile
 with open(os.path.join(os.environ['mvpd'],"dataset.json")) as f:
     datasets = list(json.load(f))
 #take out specific actions
@@ -78,10 +80,10 @@ with open(os.path.join(os.environ['mvpd'],"dataset.json")) as f:
 k = len(datasets)
 model_names = mod_name * k
 
-print(model_names)
-print(datasets)
-print(len(model_names))
-print(len(datasets))
+# print(model_names)
+# print(datasets)
+# print(len(model_names))
+# print(len(datasets))
 
 #model_names = ["mh_body_male_customquat"] * len(datasets)
 #model_names = ["mh_body_male_custom"]
@@ -103,7 +105,7 @@ filter_occluded = [False]
 filter_history = [False]
 # filter_occluded = [True, False]
 # filter_history = [True, False]
-
+inv =True #save camera invariant states
 
 # Experiments loop.
 rep = 0
@@ -177,25 +179,25 @@ for (dataset, model_name), i in \
                 # parameters['filter_history'] = fh
                 # results.parameters = parameters
                 # results.save(res_filename)
+                if inv is True:
+                    if res_filename is not None:
+                        results.save(res_filename)
 
-                if res_filename is not None:
-                    results.save(res_filename)
+                    # Camera Invariant states
 
-                # Camera Invariant states
+                    res = MTR.ModelTrackingResults()
+                    res.load(res_filename)
+                    states = res.get_model_states(model_name)
 
-                res = MTR.ModelTrackingResults()
-                res.load(res_filename)
-                states = res.get_model_states(model_name)
+                    for fr in states:
+                        for index in range(0, 7):
+                            states[fr][index] = 0
+                            if index == 6:
+                                states[fr][index] = 1
 
-                for fr in states:
-                    for index in range(0, 7):
-                        states[fr][index] = 0
-                        if index == 6:
-                            states[fr][index] = 1
+                        res.add(fr, model_name, states[fr])
 
-                    res.add(fr, model_name, states[fr])
-
-                res.save(new_res)
+                    res.save(new_res)
 
         rep += 1
 
