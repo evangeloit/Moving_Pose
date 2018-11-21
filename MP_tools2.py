@@ -3,7 +3,8 @@ import json
 from scipy.ndimage import gaussian_filter1d
 import matplotlib.pyplot as plt
 import dpcore
-
+# from glob import glob
+from os import getcwd, chdir
 from munkres import Munkres # Optimization Algorithm(Hungarian Algo) / finds the global minimum
 import itertools
 
@@ -263,7 +264,7 @@ def move_rename(top_path, topf, childf=None,rename=None):
         childf : List of "child" folder/s name/s that contains all the files
         rename: String for parent folder/s name/s
 
-        !!! Script is not working for multiple childf in the parent folder!!!
+        !!! function is not working for multiple childf in the parent folder!!!
     """
     os.chdir(top_path)
 
@@ -329,12 +330,32 @@ def move_rename(top_path, topf, childf=None,rename=None):
     if flag is not True:
         print("No Childf with that name!!")
 
-def change_package(env_var):
-    """ Changes a package Path.Imports an env variable
+# def change_package(env_var):
+#     """ Changes a package Path.Imports an env variable
+#
+#         inputs
+#         env_var : List of strings with enviroment variables env_var = ['HOME','PATH']
+#     """
+#     new_pack = []
+#     new_pack.append(env_var)
+#     return new_pack
 
-        inputs
-        env_var : List of strings with enviroment variables env_var = ['HOME','PATH']
+def AlpNumSorter(list):
+
+    r = sorted(list, key=lambda item: (int(item.partition(' ')[0]) if item[0].isdigit() else float('inf'), item))
+
+    return r
+
+def list_ext(directory, extension):
+    """ Funtion returns 2 Lists :
+    lst : List that contains all files with the specified extension
+    lstnot : List with the rest of the files without the specified extension
+
     """
-    new_pack = []
-    new_pack.append(env_var)
-    return new_pack
+    lst = [f for f in listdir(directory) if f.endswith('.' + extension)]
+
+    # r = sorted(lst, key=lambda item: (int(item.partition(' ')[0]) if item[0].isdigit() else float('inf'), item))
+    lstnot = [f for f in listdir(directory) if not f.endswith('.' + extension)]
+    # rnot = sorted(lstnot, key=lambda item: (int(item.partition(' ')[0]) if item[0].isdigit() else float('inf'), item))
+
+    return lst, lstnot

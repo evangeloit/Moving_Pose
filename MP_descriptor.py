@@ -33,11 +33,14 @@ import json
 
 #Open mhad dataset jsonfile
 with open(os.path.join(os.environ['mvpd'],"dataset.json")) as f:
-    dataset_s1 = list(json.load(f))
+    dataset_s1 = mpt.AlpNumSorter(list(json.load(f)))
 
-#
+#Paths
 dtpath = '/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/data/'
-os.chdir(dtpath) # Mhad Dataset directory
+landmarks_path = "/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/rs/Human_tracking/results_camera_invariant/"
+# os.chdir(dtpath) # Mhad Dataset directory
+
+
 model_name = 'mh_body_male_customquat'
 
 # Gaussian Filter Parameters
@@ -58,25 +61,21 @@ savefig_comp = os.getcwd() + "/plots/conf_matrix/MP_comp_mat/"
 savefig_dtw = os.getcwd() + "/plots/conf_matrix/dtw_res_conf/"
 
 # sflag =  0 : Turn off plots , 1: save figures to path
-sflag = 0
+sflag = 1
 
 FV_new = []
 
 
-subj_name = os.listdir(os.getcwd()) # List of Subjects in the directory
+subj_name = os.listdir(dtpath) # List of Subjects in the directory
 
-for subj in range(0,len(subj_name)):#for every subject
-
-    acts, acts_not = mpt.list_files1(os.path.join(os.getcwd(), subj_name[subj]), 'json')
-    # print(acts)
-    # # acts = os.listdir(os.path.join(os.getcwd(), subj_name[subj]))
+for subj in range(0,len(subj_name)):# for every subject
+    a, a_no_ext = mpt.list_ext(os.path.join(dtpath, subj_name[subj]), 'json')
+    acts = mpt.AlpNumSorter(a)
+    acts_no_ext = mpt.AlpNumSorter(a_no_ext)
     for act in range(0, len(acts)):  # for every action of a subject
-        # for name in dataset_s1:
 
-        # dataset_dir = "/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/data/" + name + ".json"
-        dataset_dir = os.path.join(os.getcwd(), subj_name[subj], acts[act])
-        input_dir = "/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/rs/Human_tracking/results_camera_invariant/" \
-                    + acts_not[act] + "_ldm.json"
+        dataset_dir = os.path.join(dtpath, subj_name[subj], acts[act])
+        input_dir = os.path.join(landmarks_path, acts_no_ext[act]+"_ldm.json")
 
         ## Load data from Json ##
         dataPoints, dataLim = mpt.load_data(input_dir, dataset_dir)
@@ -107,7 +106,7 @@ for fv in range(0, len(fv_new)):
     sim_f_v = squareform(pdist(fv_new[fv]))
 
     ## Similarity - Plot ##
-    mpt.DistMatPlot(sim_f_v, savefig_sim, name=dataset_s1[fv], flag='similarity', save_flag=sflag)
+    mpt.DistMatPlot(sim_f_v, savefig_sim, name=dataset_s1[fv], flag='similarity', save_flag=0)
 
 
 score = np.empty((len(dataset_s1)/2, len(dataset_s1)/2), np.dtype(np.float32))

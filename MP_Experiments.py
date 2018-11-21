@@ -1,7 +1,7 @@
 import os
 import sys
 import itertools
-import Moving_Pose_Descriptor.DatasetsCreateJson as dtlist
+from Moving_Pose_Descriptor import MP_tools2 as mpt
 import PythonModel3dTracker.Paths as Paths
 import PythonModel3dTracker.PythonModelTracker.TrackingResults.ModelTrackingResults as MTR
 import json
@@ -74,8 +74,10 @@ mod_name = ["mh_body_male_customquat"]
 
 #Open mhad dataset jsonfile
 with open(os.path.join(os.environ['mvpd'],"dataset.json")) as f:
-    datasets = list(json.load(f))
+    datasets = mpt.AlpNumSorter(list(json.load(f)))
 #take out specific actions
+print(datasets)
+print(len(datasets))
 
 k = len(datasets)
 model_names = mod_name * k
@@ -117,11 +119,11 @@ for (dataset, model_name), i in \
         if rep == sel_rep:
             # if p < lp: p = lp
             # Results Filename
-            res_filename = os.path.join(Paths.results, results_path + "/{0}_{1}_it{2}.json")
-            res_filename = res_filename.format(dataset, model_name, i)
+            res_filename = os.path.join(Paths.results, results_path + "/{0}_states.json")
+            res_filename = res_filename.format(dataset)
 
-            new_res = os.path.join(Paths.results, results_cam_inv + "/{0}_{1}_inv_it{2}.json")
-            new_res = new_res.format(dataset, model_name, i)
+            new_res = os.path.join(Paths.results, results_cam_inv + "/{0}_states.json")
+            new_res = new_res.format(dataset)
             print '{0} -- {1} -- d: {2}, m:{3}, results:{4}'. \
                 format(rep, i, dataset, model_name, res_filename)
             if dry_run:
