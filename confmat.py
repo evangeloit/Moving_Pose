@@ -4,6 +4,13 @@ from scipy.spatial.distance import cdist
 import numpy as np
 
 def Conf2Subject(subject1,subject2,dtpath,fv_1,fv_2,params=None ):
+    """Conf2Subj ::
+
+    inputs: subject1,subject2,dataset path,feature vector of s1,FV of s2,
+    params =[0 or 1,string] / 0: No plot saving ,1: saves all plots, string: contains the absolute path of the
+    destination save folder.
+
+    output: m x m score matrix between subj1,subj2 for act [0-11] """
 
     act_s1, act_s1_not = mpt.list_ext(os.path.join(dtpath, subject1), 'json')
     act_s2, act_s2_not = mpt.list_ext(os.path.join(dtpath, subject2), 'json')
