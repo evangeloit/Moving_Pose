@@ -11,7 +11,7 @@ import numpy as np
 from scipy.spatial.distance import pdist, squareform, cdist
 import os
 import MP_tools2 as mpt
-import dpcore #dtw c
+from Moving_Pose_Descriptor import confmat as cfm
 import matplotlib.pyplot as plt
 from heatmap import heatmap
 from heatmap import annotate_heatmap
@@ -20,16 +20,6 @@ from sklearn.metrics import confusion_matrix
 import json
 
 # Controllers
-
-# dataset = ['mhad_s01_a04', 'mhad_s02_a04', 'mhad_s03_a04','mhad_s04_a04'\
-#             ,'mhad_s05_a04', 'mhad_s06_a04', 'mhad_s07_a04','mhad_s08_a04','mhad_s09_a01','mhad_s10_a04', 'mhad_s11_a04', 'mhad_s12_a04']
-# dataset_s1 = ['mhad_s06_a11','mhad_s06_a09','mhad_s01_a11','mhad_s01_a09']
-# dataset_s1 = ['mhad_s01_a09','mhad_s01_a11','mhad_s06_a09','mhad_s06_a11']
-
-# dataset_s1 = ['mhad_s01_a01','mhad_s01_a02', 'mhad_s01_a03','mhad_s01_a04', 'mhad_s01_a05',\
-#           'mhad_s01_a06','mhad_s01_a07','mhad_s01_a08','mhad_s01_a09', 'mhad_s01_a10', \
-#               'mhad_s01_a11','mhad_s06_a01','mhad_s06_a02', 'mhad_s06_a03','mhad_s06_a04', 'mhad_s06_a05',\
-#           'mhad_s06_a06','mhad_s06_a07','mhad_s06_a08','mhad_s06_a09', 'mhad_s06_a10', 'mhad_s06_a11']
 
 #Open mhad dataset jsonfile
 with open(os.path.join(os.environ['mvpd'],"dataset.json")) as f:
@@ -61,13 +51,17 @@ savefig_comp = os.getcwd() + "/plots/conf_matrix/MP_comp_mat/"
 savefig_dtw = os.getcwd() + "/plots/conf_matrix/dtw_res_conf/"
 
 # sflag =  0 : Turn off plots , 1: save figures to path
-sflag = 1
+sflag = 0
 
-FV_new = []
+#Save Path and sflag params list
+params_conf = [sflag, savefig_dtw]
 
+fv_all = []
 
-subj_name = os.listdir(dtpath) # List of Subjects in the directory
+fv_subj = np.empty((12, 11), np.dtype(np.object))
 
+subj_name = mpt.AlpNumSorter(os.listdir(dtpath)) # List of Subjects in the directory
+# print(subj_name)
 for subj in range(0,len(subj_name)):# for every subject
     a, a_no_ext = mpt.list_ext(os.path.join(dtpath, subj_name[subj]), 'json')
     acts = mpt.AlpNumSorter(a)
@@ -95,11 +89,15 @@ for subj in range(0,len(subj_name)):# for every subject
 
         feat_vec, vec, acc = mpt.MovPoseDescriptor(p3d_gauss, StartFrame)
 
-        FV_new.append(feat_vec)
-
+        fv_all.append(feat_vec)
+        # Build feature vector by subject
+        fv_np = np.array(feat_vec)
+        fv_subj[subj][act] = fv_np
 
 # Feature Vector Array for all datasets
-fv_new = np.array(FV_new).copy()
+fv_new = np.array(fv_all).copy() # Don't need to keep a copy!!!
+
+# Feature Vector by subject
 
 ## Similarity Matrix ##
 for fv in range(0, len(fv_new)):
@@ -109,33 +107,22 @@ for fv in range(0, len(fv_new)):
     mpt.DistMatPlot(sim_f_v, savefig_sim, name=dataset_s1[fv], flag='similarity', save_flag=0)
 
 
-score = np.empty((len(dataset_s1)/2, len(dataset_s1)/2), np.dtype(np.float32))
+for sub in range(0,len(subj_name)-1):
+    #Subjects from subj_name list
+    subject1 = subj_name[sub]
+    subject2 = subj_name[sub+1]
 
-## Comparison of s01a03 Feat Vector with the all the other datasets Feat_Vecs ####
+    #Feature Vectors by subject
+    fv_1 = fv_subj[sub]
+    fv_2 = fv_subj[sub+1]
 
-for subject1 in range(0, len(dataset_s1)/2):
-    for subject6 in range(0, len(dataset_s1)/2):
+    score = cfm.Conf2Subject(subject1, subject2, dtpath, fv_1, fv_2, params=params_conf)
 
-        Y = cdist(fv_new[subject1], fv_new[subject6+(len(dataset_s1)/2)], 'euclidean')
-        p, q, C, phi = mpt.dtwC(Y, 0.1)
 
-        # Sum of diagonal steps
-        dsteps = 0
-        for r in range(0, len(q)-1):
-            qdot = abs(q[r] - q[r+1])
-            pdot = abs(p[r] - p[r+1])
-            s = qdot + pdot
-            if s==2:
-                dsteps = dsteps +1
-               # print(dsteps)
+    # mpt.DistMatPlot(Y, savefig_dtw, q, p, dtwscore=score[subject1][subject6],name=dataset_s1[subject1]+"_"+dataset_s1[subject6+(len(dataset_s1)/2)], flag='DTW', save_flag=sflag)
 
-        #Scores of DTW for every subject
-        score[subject1][subject6] = (C[-1, -1]/((Y.shape[0]+Y.shape[1])))
-        # score[subject1][subject6] = C[-1, -1]/dsteps
 
-        mpt.DistMatPlot(Y, savefig_comp, name=dataset_s1[subject1]+"_"+dataset_s1[subject6+(len(dataset_s1)/2)], flag='compare', save_flag=sflag)
-        mpt.DistMatPlot(Y, savefig_dtw, q, p, dtwscore=score[subject1][subject6],name=dataset_s1[subject1]+"_"+dataset_s1[subject6+(len(dataset_s1)/2)], flag='DTW', save_flag=sflag)
-
+print() ### checked WORKING till this line!!!
 
 #min of rows /min col - class Score %
 
@@ -176,7 +163,7 @@ print(class_score)
 
 #Conf Matrix MP_tools
 actions = ["A01","A02","A03","A04","A05","A06","A07","A08","A09","A10","A11"]
-axlabel = ['S06','S01'] # [x,y]
+axlabel = ['S11','S12'] # [x,y]
 mpt.plot_confusion_matrix(score, classes=actions, normalize=False, title='confusion matrix',axs=axlabel)
 
 # plt.plot(indexes[:,0], indexes[:,1],'ro')

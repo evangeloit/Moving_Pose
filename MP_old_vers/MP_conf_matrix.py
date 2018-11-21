@@ -10,11 +10,11 @@
 import numpy as np
 from scipy.spatial.distance import pdist, squareform, cdist
 import os
-import MP_tools2 as mpt
+import Moving_Pose_Descriptor.MP_tools2 as mpt
 import dpcore #dtw c
 import matplotlib.pyplot as plt
-from heatmap import heatmap
-from heatmap import annotate_heatmap
+from Moving_Pose_Descriptor.heatmap import heatmap
+from Moving_Pose_Descriptor.heatmap import annotate_heatmap
 
 # Controllers
 

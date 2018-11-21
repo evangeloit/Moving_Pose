@@ -3,8 +3,6 @@ import json
 from scipy.ndimage import gaussian_filter1d
 import matplotlib.pyplot as plt
 import dpcore
-# from glob import glob
-from os import getcwd, chdir
 from munkres import Munkres # Optimization Algorithm(Hungarian Algo) / finds the global minimum
 import itertools
 
@@ -341,7 +339,8 @@ def move_rename(top_path, topf, childf=None,rename=None):
 #     return new_pack
 
 def AlpNumSorter(list):
-
+    """input : alphanumeric list
+       output : Sorted alphanumeric list """
     r = sorted(list, key=lambda item: (int(item.partition(' ')[0]) if item[0].isdigit() else float('inf'), item))
 
     return r
@@ -353,7 +352,6 @@ def list_ext(directory, extension):
 
     """
     lst = [f for f in listdir(directory) if f.endswith('.' + extension)]
-
     # r = sorted(lst, key=lambda item: (int(item.partition(' ')[0]) if item[0].isdigit() else float('inf'), item))
     lstnot = [f for f in listdir(directory) if not f.endswith('.' + extension)]
     # rnot = sorted(lstnot, key=lambda item: (int(item.partition(' ')[0]) if item[0].isdigit() else float('inf'), item))
