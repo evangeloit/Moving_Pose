@@ -79,9 +79,10 @@ def cfm_savefig(subject1,subject2,params_cmf):
         # plt.plot(indexes[:,0], indexes[:,1],'ro')
         plt.title('Classification Score = ' + str(round(params_cmf[2], 2)) + '%\nmisclassified=' + str(int(params_cmf[3])))
         plt.rcParams.update({'font.size': 13})
-        # plt.tight_layout()
+        plt.tight_layout()
         # plt.show()
-        name = subject2 + '_' + subject1
+
+        name = subject1 + '_' + subject2
         my_file = name + '_cfm'
 
         plt.savefig(goal_dir + my_file)

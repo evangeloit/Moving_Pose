@@ -57,7 +57,7 @@ savefig_dtw = os.getcwd() + "/plots/conf_matrix/dtw_res_conf/"
 savefig_conf = os.getcwd() + "/plots/conf_matrix/conf/"
 
 # sflag =  0 : Turn off plots , 1: save figures to path
-sflag = 1
+sflag = 0
 
 params_dtw = [0, savefig_dtw] # sflag 0 for
 
@@ -65,8 +65,12 @@ fv_all = []
 
 fv_subj = np.empty((12, 11), np.dtype(np.object))
 
+#Subjects
 subj_name = mpt.AlpNumSorter(os.listdir(dtpath)) # List of Subjects in the directory
 # print(subj_name)
+
+c_score = np.empty((len(subj_name), len(subj_name)), np.dtype(np.float32)) # Classification scores totals
+
 for subj in range(0,len(subj_name)):# for every subject
     a, a_no_ext = mpt.list_ext(os.path.join(dtpath, subj_name[subj]), 'json')
     acts = mpt.AlpNumSorter(a)
@@ -114,7 +118,7 @@ for fv in range(0, len(fv_new)):
 
 for sub in range(0, len(subj_name)):
     ct = 0
-    for sub2 in range(0, len(subj_name)-1):
+    for sub2 in range(0, len(subj_name)):
 
         #Subjects from subj_name list
         subject1 = subj_name[sub]
@@ -124,13 +128,33 @@ for sub in range(0, len(subj_name)):
         fv_1 = fv_subj[sub]
         fv_2 = fv_subj[ct]
 
-        #Create confusion matrix for every pair of subjects
-        score, class_score, missclass = cfm.Conf2Subject(subject1, subject2, dtpath, fv_1, fv_2, params=params_dtw)
         ct = ct + 1
+
+        #Create confusion matrix for every pair of subjects
+        if subject1 != subject2: # Take out similiraty matrixes
+            score, class_score, missclass = cfm.Conf2Subject(subject1, subject2, dtpath, fv_1, fv_2, params=params_dtw)
+
+            c_score[sub][sub2] = class_score # one vs all subjects for same actions
+        else:
+            c_score[sub][sub2] = 0
 
         if sflag == 1:
             params_cmf = [score, actions, class_score, missclass, sflag, savefig_conf]
             cfm.cfm_savefig(subject1, subject2, params_cmf)
+
+# mhad_average class_score
+sum_cscore = np.sum(c_score, axis=1, dtype=float)
+avg_cscore = np.divide(sum_cscore,len(subj_name)-1)
+
+
+
+# avg_cscores = np.empty((12, 0), np.dtype(np.float32))
+
+# for avg in range(0,c_score.shape[1]):
+#
+#     avg_cscores[avg][:] = np.sum(c_score, axis=1,dtype=float)
+
+
 
 print() ### checked WORKING till this line!!!
 
