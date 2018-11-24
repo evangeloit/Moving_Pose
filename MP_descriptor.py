@@ -10,7 +10,7 @@
 import numpy as np
 from scipy.spatial.distance import pdist, squareform, cdist
 import os
-import MP_tools2 as mpt
+from Moving_Pose_Descriptor import MP_tools2 as mpt
 from Moving_Pose_Descriptor import confmat as cfm
 import matplotlib.pyplot as plt
 from heatmap import heatmap
@@ -33,6 +33,9 @@ landmarks_path = "/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/D
 
 model_name = 'mh_body_male_customquat'
 
+# Actions
+actions = ["A01", "A02", "A03", "A04", "A05", "A06", "A07", "A08", "A09", "A10", "A11"]
+
 # Gaussian Filter Parameters
 sigma = 1
 w = 5  # windowSize
@@ -50,11 +53,13 @@ savefig_comp = os.getcwd() + "/plots/conf_matrix/MP_comp_mat/"
 # DTW figures path
 savefig_dtw = os.getcwd() + "/plots/conf_matrix/dtw_res_conf/"
 
-# sflag =  0 : Turn off plots , 1: save figures to path
-sflag = 0
+# Confusion matrixes save figures path
+savefig_conf = os.getcwd() + "/plots/conf_matrix/conf/"
 
-#Save Path and sflag params list
-params_conf = [sflag, savefig_dtw]
+# sflag =  0 : Turn off plots , 1: save figures to path
+sflag = 1
+
+params_dtw = [0, savefig_dtw] # sflag 0 for
 
 fv_all = []
 
@@ -94,7 +99,7 @@ for subj in range(0,len(subj_name)):# for every subject
         fv_np = np.array(feat_vec)
         fv_subj[subj][act] = fv_np
 
-# Feature Vector Array for all datasets
+# Feature Vector Array for all subjects
 fv_new = np.array(fv_all).copy() # Don't need to keep a copy!!!
 
 # Feature Vector by subject
@@ -107,43 +112,27 @@ for fv in range(0, len(fv_new)):
     mpt.DistMatPlot(sim_f_v, savefig_sim, name=dataset_s1[fv], flag='similarity', save_flag=0)
 
 
-for sub in range(0,len(subj_name)-1):
-    #Subjects from subj_name list
-    subject1 = subj_name[sub]
-    subject2 = subj_name[sub+1]
+for sub in range(0, len(subj_name)):
+    ct = 0
+    for sub2 in range(0, len(subj_name)-1):
 
-    #Feature Vectors by subject
-    fv_1 = fv_subj[sub]
-    fv_2 = fv_subj[sub+1]
+        #Subjects from subj_name list
+        subject1 = subj_name[sub]
+        subject2 = subj_name[ct]
 
-    score = cfm.Conf2Subject(subject1, subject2, dtpath, fv_1, fv_2, params=params_conf)
+        #Feature Vectors by subject
+        fv_1 = fv_subj[sub]
+        fv_2 = fv_subj[ct]
 
+        #Create confusion matrix for every pair of subjects
+        score, class_score, missclass = cfm.Conf2Subject(subject1, subject2, dtpath, fv_1, fv_2, params=params_dtw)
+        ct = ct + 1
 
-    # mpt.DistMatPlot(Y, savefig_dtw, q, p, dtwscore=score[subject1][subject6],name=dataset_s1[subject1]+"_"+dataset_s1[subject6+(len(dataset_s1)/2)], flag='DTW', save_flag=sflag)
-
+        if sflag == 1:
+            params_cmf = [score, actions, class_score, missclass, sflag, savefig_conf]
+            cfm.cfm_savefig(subject1, subject2, params_cmf)
 
 print() ### checked WORKING till this line!!!
-
-#min of rows /min col - class Score %
-
-# Pscore = ((score/np.amax(score))*100).copy()
-Pminrow = np.argmin(score, axis=1)# axis=1 row min index
-Pmincol = np.argmin(score, axis=0)# axis=0 col min index
-Pvec = np.arange(0, len(Pminrow))
-mrow = Pminrow == Pvec
-mcol = Pmincol == np.transpose(Pvec)
-mcol = mcol.astype(int)
-mrow = mrow.astype(int)
-mtot = mcol + mrow
-
-mnotr= Pminrow != Pvec
-mnotc= Pmincol != np.transpose(Pvec)
-
-missclass = np.sum(mnotr.astype(int)+mnotc.astype(int))
-print(missclass)
-class_score = (np.sum(mtot.astype(int),dtype=float)/(2*len(score)))*100
-print(class_score)
-
 
 #Optimization -Best Assignemt -class score%
 
@@ -159,43 +148,4 @@ print(class_score)
 # print(match)
 # missclass = float((indexes.shape[0] - match)/2)
 # class_score = float((indexes.shape[0] -missclass)/indexes.shape[0])*100
-#
-
-#Conf Matrix MP_tools
-actions = ["A01","A02","A03","A04","A05","A06","A07","A08","A09","A10","A11"]
-axlabel = ['S11','S12'] # [x,y]
-mpt.plot_confusion_matrix(score, classes=actions, normalize=False, title='confusion matrix',axs=axlabel)
-
-# plt.plot(indexes[:,0], indexes[:,1],'ro')
-plt.title('Classification Score = '+ str(round(class_score,2))+'%\nmisclassified='+str(int(missclass)))
-plt.rcParams.update({'font.size': 13})
-plt.tight_layout()
-plt.show()
-
-
-# # Confusion Matrix
-# # actionsS1 = ["A11","A09"]
-# # actionsS6 = ["A11","A09"]
-# #
-# actionsS1 = ["A01","A02","A03","A04","A05","A06","A07","A08","A09","A10","A11"]
-# actionsS6 = ["A01","A02","A03","A04","A05","A06","A07","A08","A09","A10","A11"]
-#
-# fig, ax = plt.subplots()
-# ax.set_xlabel('S06')
-# ax.set_ylabel('S01')
-# # ax.xaxis.set_label_position('top')
-#
-# im, cbar = heatmap(score, actionsS1, actionsS6,ax=ax,
-#                    cmap=None, cbarlabel="Score")
-#
-# texts = annotate_heatmap(im, valfmt="{x:.2f} ")
-#
-
-# # plt.title('Classification Score = '+ str(class_score.round(decimals=2))+'%\nmisclassified='+str(missclass))
-# plt.title('Classification Score = '+ str(round(class_score,2))+'%\nmisclassified='+str(int(missclass)))
-# plt.rcParams.update({'font.size': 13})
-# fig.tight_layout()
-# plt.show()
-#
-# print()
 
