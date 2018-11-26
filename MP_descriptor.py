@@ -12,6 +12,8 @@ from scipy.spatial.distance import pdist, squareform, cdist
 import os
 from Moving_Pose_Descriptor import MP_tools2 as mpt
 from Moving_Pose_Descriptor import confmat as cfm
+from Moving_Pose_Descriptor.heatmap import heatmap
+from Moving_Pose_Descriptor.heatmap import annotate_heatmap
 import matplotlib.pyplot as plt
 from heatmap import heatmap
 from heatmap import annotate_heatmap
@@ -144,15 +146,34 @@ for sub in range(0, len(subj_name)):
 
 # mhad_average class_score
 sum_cscore = np.sum(c_score, axis=1, dtype=float)
-avg_cscore = np.divide(sum_cscore,len(subj_name)-1)
+avg_cscore = np.divide(sum_cscore, len(subj_name)-1)
+
+img_view = np.reshape(avg_cscore,(12,1))
+collabel = ['average']
+
+im, cbar = heatmap(img_view, actions,collabel,
+                   cmap='jet')
+
+texts = annotate_heatmap(im, valfmt="{x:.2f} ")
+plt.axes().set_aspect('auto')
+plt.title('Average Performance for every Subject\n Mhad_dataset')
+plt.show()
+
+print()
 
 
+# avg_cscore = np.array(avg_cscore).copy()
+# print(avg_cscore)
+# ax1 = ['avg', 'subjects']
+# mpt.plot_confusion_matrix(avg_cscore, classes=subj_name, normalize=False, title='mhad avg score', axs=ax1)
+# plt.show()
 
-# avg_cscores = np.empty((12, 0), np.dtype(np.float32))
+# axlabel = ['subjects', 'subjects']  # [x,y]
+# mpt.plot_confusion_matrix(c_score, classes=subj_name, normalize=False, title='confusion matrix', axs=axlabel)
+# plt.title('Class Scores 1 vs All in %')
+# plt.show()
 
-# for avg in range(0,c_score.shape[1]):
-#
-#     avg_cscores[avg][:] = np.sum(c_score, axis=1,dtype=float)
+
 
 
 

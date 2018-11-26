@@ -222,7 +222,7 @@ def plot_confusion_matrix(cm, classes,
 
     # print(cm)
 
-    im = ax.imshow(cm, interpolation='nearest', cmap=cmap,aspect='auto')
+    im = ax.imshow(cm, interpolation='nearest', cmap=cmap, aspect='auto')
     plt.title(title)
     # Create colorbar
     cbar = ax.figure.colorbar(im)
