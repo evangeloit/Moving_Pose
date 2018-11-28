@@ -4,8 +4,7 @@
 # 3) Filters all landmarks with a gaussian filter 5by1 in time dimension
 # 4) Calculates Feature Vector for every given dataset
 # 5) Creates a self Similarity matrix and saves it in a figure on demand (sflag)
-# 6) Compares the feature vector of a given set with a different set using cdist
-# and saves distance matrix figure on demand (sflag)
+# 6) Compares every subject vs all subjects for all actions and saves results in path
 
 import numpy as np
 from scipy.spatial.distance import pdist, squareform, cdist

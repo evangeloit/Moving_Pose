@@ -94,7 +94,7 @@ def cfm_savefig(subject1,subject2,params_cmf):
         plt.close('all')
 
 def avg_perf_savefig(avg_cscore, c_score, subj_name, params=None):
-    """ Save 2 figures at specified path using params key= list [0 or 1,save_path_string]
+    """ Saves 2 figures at specified path using params key= list [0 or 1,save_path_string]
         -first element of the "params" list 1 or 0 activates or deactivates plot function.
         -second element is the string which specifies save path for the plot.
         fig1: Class scores 1 subj vs all subs
