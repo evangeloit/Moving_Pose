@@ -18,7 +18,6 @@ import matplotlib.pyplot as plt
 from heatmap import heatmap
 from heatmap import annotate_heatmap
 from munkres import Munkres
-from sklearn.metrics import confusion_matrix
 import json
 
 # Controllers
@@ -46,6 +45,9 @@ t = (((w - 1) / 2) - 0.5) / sigma  # truncate
 # Feature Vector starting Frame
 StartFrame = 2  # Start from 3rd Frame's 3D coordinates
 
+# sflag =  0 : Turn off plots , 1: save figures to path. Global parameter
+sflag = 0
+
 # Similarity Matrix -- save Figure path
 savefig_sim = os.getcwd() + "/plots/conf_matrix/MP_sim_mat/"
 
@@ -54,17 +56,17 @@ savefig_comp = os.getcwd() + "/plots/conf_matrix/MP_comp_mat/"
 
 # DTW figures path
 savefig_dtw = os.getcwd() + "/plots/conf_matrix/dtw_res_conf/"
+params_dtw = [0, savefig_dtw] # sflag 0 or 1 , savefig_dtw = path to save plot /
 
-# Confusion matrixes save figures path
+# Confusion matrix save figures path
 savefig_conf = os.getcwd() + "/plots/conf_matrix/conf/"
 
-# sflag =  0 : Turn off plots , 1: save figures to path
-sflag = 0
-
-params_dtw = [0, savefig_dtw] # sflag 0 for
+# 1 vs all / Average dataset performance save figs path
+savefig_avg = os.getcwd() + "/plots/conf_matrix/"
+params_avg = [1, savefig_avg]
 
 fv_all = []
-
+#Feature vector by subject initialiazation
 fv_subj = np.empty((12, 11), np.dtype(np.object))
 
 #Subjects
@@ -147,33 +149,11 @@ for sub in range(0, len(subj_name)):
 # mhad_average class_score
 sum_cscore = np.sum(c_score, axis=1, dtype=float)
 avg_cscore = np.divide(sum_cscore, len(subj_name)-1)
+# np.save('c_score.npy',c_score)
 
-img_view = np.reshape(avg_cscore,(12,1))
-collabel = ['average']
-
-im, cbar = heatmap(img_view, actions,collabel,
-                   cmap='jet')
-
-texts = annotate_heatmap(im, valfmt="{x:.2f} ")
-plt.axes().set_aspect('auto')
-plt.title('Average Performance for every Subject\n Mhad_dataset')
-plt.show()
-
-print()
-
-
-# avg_cscore = np.array(avg_cscore).copy()
-# print(avg_cscore)
-# ax1 = ['avg', 'subjects']
-# mpt.plot_confusion_matrix(avg_cscore, classes=subj_name, normalize=False, title='mhad avg score', axs=ax1)
-# plt.show()
-
-# axlabel = ['subjects', 'subjects']  # [x,y]
-# mpt.plot_confusion_matrix(c_score, classes=subj_name, normalize=False, title='confusion matrix', axs=axlabel)
-# plt.title('Class Scores 1 vs All in %')
-# plt.show()
-
-
+#Plots 1 vs All / Average Perforamnce to "params" path
+if params_avg[0] == 1:
+    cfm.avg_perf_savefig(avg_cscore, c_score, subj_name, params=params_avg)
 
 
 

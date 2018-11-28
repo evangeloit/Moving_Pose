@@ -3,6 +3,8 @@ from Moving_Pose_Descriptor import MP_tools2 as mpt
 from scipy.spatial.distance import cdist
 import numpy as np
 import matplotlib.pyplot as plt
+from Moving_Pose_Descriptor.heatmap import heatmap
+from Moving_Pose_Descriptor.heatmap import annotate_heatmap
 
 def Conf2Subject(subject1,subject2,dtpath,fv_1,fv_2,params=None ):
     """Conf2Subj ::
@@ -69,6 +71,9 @@ def Conf2Subject(subject1,subject2,dtpath,fv_1,fv_2,params=None ):
     return score, class_score , missclass
 
 def cfm_savefig(subject1,subject2,params_cmf):
+    """Saves Confusion matrix of 2 subjects and 11 actions at the specified path params_cmf[]
+    input: subject1, subject2 names strings
+    ouput: plt.savefig to path"""
 
     if params_cmf[4] == 1:
 
@@ -86,4 +91,32 @@ def cfm_savefig(subject1,subject2,params_cmf):
         my_file = name + '_cfm'
 
         plt.savefig(goal_dir + my_file)
+        plt.close('all')
+
+def avg_perf_savefig(avg_cscore, c_score, subj_name, params=None):
+    """ Save 2 figures at specified path using params key= list [0 or 1,save_path_string]
+        -first element of the "params" list 1 or 0 activates or deactivates plot function.
+        -second element is the string which specifies save path for the plot.
+        fig1: Class scores 1 subj vs all subs
+        fig2 : Average performance save fig """
+    if params[0] == 1:
+
+        goal_dir = os.path.join(params[1])
+
+        # plot 1 subj vs all
+        name1 = '1vsAll'
+        axis1 = ['subjects', 'subjects']
+        mpt.plot_confusion_matrix(c_score, classes=subj_name, normalize=False, title='mhad class score per subject', axs=axis1)
+        plt.savefig(goal_dir + name1)
+        plt.close('all')
+
+        # # Plot Average Performance in dataset
+        name2 = 'avg_performance_dtset'
+        col_label = ['average']
+        img_view = np.reshape(avg_cscore, (12, 1))
+        im, cbar= heatmap(img_view, subj_name, col_label, cmap='jet')
+        texts = annotate_heatmap(im, valfmt="{x:.2f} ")
+        plt.axes().set_aspect('auto')
+        plt.title('Average Performance for every Subject\n Mhad_dataset')
+        plt.savefig(goal_dir + name2)
         plt.close('all')
