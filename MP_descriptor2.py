@@ -119,7 +119,7 @@ for fv in range(0, len(fv_new)):
     mpt.DistMatPlot(sim_f_v, savefig_sim, name=dataset_s1[fv], flag='similarity', save_flag=0)
 
 ctr = 0
-evmat = np.empty((132,132),np.dtype(np.float32))
+evmat = np.empty((12,12),np.dtype(np.object))
 for sub in range(0, len(subj_name)):
     ct = 0
     for sub2 in range(0, len(subj_name)):
@@ -149,7 +149,7 @@ for sub in range(0, len(subj_name)):
 
         # if subject1 != subject2: # Take out similiraty matrixes
         score, class_score, missclass = cfm.Conf2Subject(subject1, subject2, dtpath, fv_1, fv_2, params=params_dtw)
-        evmat[sub][sub2] = score[0, 0]
+        evmat[sub][sub2] = score
         c_score[sub][sub2] = class_score # one vs all subjects for same actions
 
         if sflag == 1:
@@ -163,7 +163,11 @@ sum_cscore = np.sum(c_score, axis=1, dtype=float)
 # avg_cscore = np.divide(sum_cscore, len(subj_name)-1)
 avg_cscore = np.divide(sum_cscore, len(subj_name))
 
+np.save('evmat.npy',evmat)
+
 # np.save('c_score.npy',c_score)
+new1 = evmat[2][5]
+# new2 = new1[0]
 
 #Plots 1 vs All / Average Perforamnce to "params" path
 if params_avg[0] == 1:

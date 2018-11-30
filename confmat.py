@@ -44,7 +44,7 @@ def Conf2Subject(subject1,subject2,dtpath,fv_1,fv_2,params=None ):
 
             # Scores of DTW for every subject / Objective Function
             score[sub1][sub2] = (C[-1, -1] / ((Y.shape[0] + Y.shape[1])))
-            #
+
             mpt.DistMatPlot(Y, params[1], q, p, dtwscore=score[sub1][sub2],
                             name=act_s1_not[sub1] + "_" + act_s2_not[sub2], flag='DTW',
                             save_flag=params[0])
