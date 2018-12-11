@@ -5,6 +5,8 @@ import numpy as np
 import matplotlib.pyplot as plt
 from Moving_Pose_Descriptor.heatmap import heatmap
 from Moving_Pose_Descriptor.heatmap import annotate_heatmap
+import math
+
 
 def Conf2Subject(subject1,subject2,dtpath,fv_1,fv_2,params=None ):
     """Conf2Subj ::
@@ -120,3 +122,29 @@ def avg_perf_savefig(avg_cscore, c_score, subj_name, params=None):
         plt.title('Average Performance for every Subject\n Mhad_dataset')
         plt.savefig(goal_dir + name2)
         plt.close('all')
+
+
+# evmat = np.load('evmat.npy')
+def evaluation_matrix(evmat,savefig=None):
+    new1 = np.empty((132, 132), dtype=float)
+
+    for iRow in range(0, 132):
+        for iCol in range(0, 132):
+            iSub1 = iRow % 12
+            iAct1 = int(math.floor(iRow / 12))
+
+            iSub2 = iCol % 12
+            iAct2 = int(math.floor(iCol / 12))
+
+            new1[iRow][iCol] = evmat[iSub1][iSub2][iAct1][iAct2]
+
+    if savefig[0]==1:
+        figname = "Conf_Matrix_Total"
+        plt.imshow(new1, cmap='jet')
+        plt.title("Confusion Matrix\nMhad Dataset(12 Subjects x 11 Actions)")
+        plt.axes().set_aspect('auto')
+        plt.xlabel("Actions")
+        plt.ylabel("Actions")
+        plt.savefig(savefig[1] + figname)
+
+    return new1

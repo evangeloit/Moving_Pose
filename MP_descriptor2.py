@@ -62,7 +62,10 @@ savefig_conf = os.getcwd() + "/plots/conf_matrix/conf/"
 
 # 1 vs all / Average dataset performance save figs path
 savefig_avg = os.getcwd() + "/plots/conf_matrix/"
-params_avg = [1, savefig_avg]
+params_avg = [0, savefig_avg]
+
+savefig_evalmat =  os.getcwd() + "/plots/conf_matrix/"
+params_evalmat = [0, savefig_avg]
 
 fv_all = []
 #Feature vector by subject initialiazation
@@ -118,7 +121,7 @@ for fv in range(0, len(fv_new)):
     ## Similarity - Plot ##
     mpt.DistMatPlot(sim_f_v, savefig_sim, name=dataset_s1[fv], flag='similarity', save_flag=0)
 
-ctr = 0
+
 evmat = np.empty((12,12),np.dtype(np.object))
 for sub in range(0, len(subj_name)):
     ct = 0
@@ -133,21 +136,8 @@ for sub in range(0, len(subj_name)):
         fv_2 = fv_subj[ct]
 
         ct = ct + 1
-        ctr+=1
-        print(ctr)
         #Create confusion matrix for every pair of subjects
-        # if subject1 != subject2: # Take out similiraty matrixes
-        #     score, class_score, missclass = cfm.Conf2Subject(subject1, subject2, dtpath, fv_1, fv_2, params=params_dtw)
-        #
-        #     c_score[sub][sub2] = class_score # one vs all subjects for same actions
-        #
-        #     if sflag == 1:
-        #         params_cmf = [score, actions, class_score, missclass, sflag, savefig_conf]
-        #         cfm.cfm_savefig(subject1, subject2, params_cmf)
-        # else:
-        #     c_score[sub][sub2] = 0
 
-        # if subject1 != subject2: # Take out similiraty matrixes
         score, class_score, missclass = cfm.Conf2Subject(subject1, subject2, dtpath, fv_1, fv_2, params=params_dtw)
         evmat[sub][sub2] = score
         c_score[sub][sub2] = class_score # one vs all subjects for same actions
@@ -157,38 +147,20 @@ for sub in range(0, len(subj_name)):
             cfm.cfm_savefig(subject1, subject2, params_cmf)
 
 
-
 # mhad_average class_score
 sum_cscore = np.sum(c_score, axis=1, dtype=float)
-# avg_cscore = np.divide(sum_cscore, len(subj_name)-1)
 avg_cscore = np.divide(sum_cscore, len(subj_name))
-
-np.save('evmat.npy',evmat)
-
-# np.save('c_score.npy',c_score)
-new1 = evmat[2][5]
-# new2 = new1[0]
 
 #Plots 1 vs All / Average Perforamnce to "params" path
 if params_avg[0] == 1:
     cfm.avg_perf_savefig(avg_cscore, c_score, subj_name, params=params_avg)
 
+#Evaluation Matrix
+# np.save('evmat.npy',evmat)
+eval_mat = cfm.evaluation_matrix(evmat, savefig=params_evalmat)
+np.save('eval_mat.npy',eval_mat)
+
+# print() ### checked WORKING till this line!!!
 
 
-print() ### checked WORKING till this line!!!
-
-#Optimization -Best Assignemt -class score%
-
-# indexes = mpt.Optimize(score)
-# indexes = np.array(mpt.Optimize(score))
-# truth_index = np.transpose(np.array(np.diag_indices(11)))
-#
-# match = 0
-# for rr in range(0,indexes.shape[0]):
-#         if truth_index[rr][0] == indexes[rr][0] and truth_index[rr][1] == indexes[rr][1] :
-#             match = match+1
-#
-# print(match)
-# missclass = float((indexes.shape[0] - match)/2)
-# class_score = float((indexes.shape[0] -missclass)/indexes.shape[0])*100
 
