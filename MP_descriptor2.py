@@ -11,6 +11,7 @@ from scipy.spatial.distance import pdist, squareform, cdist
 import os
 from Moving_Pose_Descriptor import MP_tools2 as mpt
 from Moving_Pose_Descriptor import confmat as cfm
+from Moving_Pose_Descriptor import Threshold_Precision_Recall as TPR
 from Moving_Pose_Descriptor.heatmap import heatmap
 from Moving_Pose_Descriptor.heatmap import annotate_heatmap
 import matplotlib.pyplot as plt
@@ -158,7 +159,11 @@ if params_avg[0] == 1:
 #Evaluation Matrix
 # np.save('evmat.npy',evmat)
 eval_mat = cfm.evaluation_matrix(evmat, savefig=params_evalmat)
-np.save('eval_mat.npy',eval_mat)
+# np.save('eval_mat.npy',eval_mat)
+
+#Calculate Precision - Recall - Threshold: 0:1:0.05
+# tstep = [0, 1, 0.05]
+TPR.precision_recall(eval_mat)
 
 # print() ### checked WORKING till this line!!!
 

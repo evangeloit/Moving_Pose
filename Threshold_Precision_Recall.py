@@ -1,75 +1,72 @@
 import numpy as np
 import os
-from Moving_Pose_Descriptor import MP_tools2 as mpt
-from Moving_Pose_Descriptor.heatmap import heatmap
-from Moving_Pose_Descriptor.heatmap import annotate_heatmap
 import matplotlib.pyplot as plt
-from sklearn.preprocessing import normalize
-conf = np.load('eval_mat.npy')
+#from sklearn.preprocessing import normalize
+from Moving_Pose_Descriptor import ThresPR as classify
 
-conf = normalize(conf, axis=0, norm='max')
+# conf_1 = np.load('eval_mat.npy')
+# conf = normalize(conf_1, norm='max')
+# conf = conf_1 / np.amax(conf_1)
 
-act_thres_pres_rec = np.zeros((11, 11, 2), dtype=float)
+def precision_recall(conf_not):
 
-for t in range(0, 11):
-    THRES = 0.1 * t
+    conf = conf_not / np.amax(conf_not)#_not normalized
+    act_thres_pres_rec = np.zeros((11, 21, 2), dtype=float)
+    # total =(tstep[0]/tstep[1]) + 1
 
-    gt_pred_conf = np.zeros((11, 11), dtype=int) # rows = predictec, cols = ground truth
-    # THRES = 0.2
+    for label in range(0, 11):
+        for t in range(0, 21):
+            thres = 0.05 * t
 
-    # minimum of average errors
-    ncorrect = 0
-    for iRow in range(0, 132):
-        #conf[iRow][iRow] = 1000000 # remove diagonal
+            tp = 0.0
+            fp = 0.0
+            tn = 0.0
+            fn = 0.0
 
-        avg_err = np.zeros(11, dtype=float)
+            for iSubject in range(0, 12):
+                for iAction in range(0, 11):
+                    answer = classify.belongsto(iSubject, iAction, label, thres, conf)
 
-        # remove currect subject from comparison
-        subjects = range(0, 12)
-        subjects = np.setdiff1d(subjects, np.array([iRow % 12]))
+                    if (answer): # positive
+                        if (iAction == label):
+                            tp += 1
+                        else:
+                            fp += 1
+                    else: # negative
+                        if (iAction != label):
+                            tn += 1
+                        else:
+                            fn += 1
 
-        for iAction in range(0, 11):
-            for iSubject in subjects:
-                avg_err[iAction] += conf[iRow][iAction * 12 + iSubject] * (1.0/11)
+                    precision = tp / (tp + fp + 0.001)
+                    recall    = tp / (tp + fn + 0.001)
 
-        gt_answer = int(np.floor(iRow / 12))
+                    act_thres_pres_rec[label][t][0] = precision
+                    act_thres_pres_rec[label][t][1] = recall
 
-        gt_pred_conf[gt_answer][np.argwhere(avg_err <= THRES)] += 1
+    # Plots
+    actions = ["A01", "A02", "A03", "A04", "A05", "A06", "A07", "A08", "A09", "A10", "A11"]
+    thresp = np.linspace(0,1,21)
 
-    precision = np.zeros(11, dtype=float)
-    recall    = np.zeros(11, dtype=float)
-    rowise  = np.sum(gt_pred_conf, axis=0)
-    colwise = np.sum(gt_pred_conf, axis=1)
-
+    goal_dir = os.getcwd() + "/plots/conf_matrix/thres_prec_rec/"
     for iAction in range(0, 11):
-        precision[iAction] = float(gt_pred_conf[iAction][iAction]) / (rowise[iAction] + 0.001)
-        recall[iAction]    = float(gt_pred_conf[iAction][iAction]) / (colwise[iAction] + 0.001)
+        # create new graph
+        recs = []
+        precs = []
+        for iThres in range(0, 21):
+            # add act_thres_pres_rec[iAction][iThres][0/1] to graph
+                r = [act_thres_pres_rec[iAction][iThres][1]]
+                recs.extend(r)
+                p = [act_thres_pres_rec[iAction][iThres][0]]
+                precs.extend(p)
+        plt.plot(thresp,recs,linestyle='-', marker='o', color='b',label='recall')
+        plt.plot(thresp,precs,linestyle='-', marker='o', color='g',label='precision')
+        plt.xlabel('Threshold')
+        plt.ylabel('Precision/Recall')
+        plt.legend(loc='upper right')
+        plt.title("Action: " + actions[iAction] + "\nTHRES: 0:1:0.05")
+        plt.savefig(goal_dir + actions[iAction])
+        # plt.show()
+        plt.close('all')
 
-        act_thres_pres_rec[iAction][t][0] = precision[iAction]
-        act_thres_pres_rec[iAction][t][1] = recall[iAction]
-
-    # act_thres_prec_rec
-#
-# for iAction in range(0, 11):
-#     # create new graph
-#     for iThres in range(0, 11):
-#         # add act_thres_pres_rec[iAction][iThres][0/1] to graph
-
-print 'tat'
-#
-# thr = 0.2
-# positives = 0
-# negatives = 0
-#
-# for iRow in range (0,12):
-#     RowConf = cmf_norm[iRow][:]
-#     index = np.argwhere(RowConf<thr)
-#
-#     for idx in index:
-#         # print(idx)
-#         if idx<=11:
-#             positives+=1
-#         if idx>11:
-#             negatives+=1
-# # plt.show()
 # print()
