@@ -113,6 +113,7 @@ for subj in range(0,len(subj_name)):# for every subject
 # Feature Vector Array for all subjects
 fv_new = np.array(fv_all).copy() # Don't need to keep a copy!!!
 
+np.save('fv.npy', fv_subj)
 # Feature Vector by subject
 
 ## Similarity Matrix ##

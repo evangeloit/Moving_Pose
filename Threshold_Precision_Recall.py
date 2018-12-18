@@ -15,7 +15,7 @@ def precision_recall(conf_not):
     # total =(tstep[0]/tstep[1]) + 1
 
     for label in range(0, 11):
-        for t in range(0, 21):
+        for t in range(0,21):
             thres = 0.05 * t
 
             tp = 0.0

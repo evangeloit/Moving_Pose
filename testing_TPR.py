@@ -11,7 +11,7 @@ conf = conf_1 / np.amax(conf_1)
 
 
 # conf = conf_not / np.amax(conf_not)#_not normalized
-act_thres_pres_rec = np.zeros((11, 21, 2), dtype=float)
+act_thres_pres_rec = np.zeros((11, 21, 3), dtype=float)
 # total =(tstep[0]/tstep[1]) + 1
 
 for label in range(0, 11):
@@ -40,9 +40,11 @@ for label in range(0, 11):
 
                 precision = tp / (tp + fp + 0.001)
                 recall    = tp / (tp + fn + 0.001)
+                fpr = fp / (fp + tn +0.001 )
 
                 act_thres_pres_rec[label][t][0] = precision
                 act_thres_pres_rec[label][t][1] = recall
+                act_thres_pres_rec[label][t][2] = fpr
 
     # Plots
 actions = ["A01", "A02", "A03", "A04", "A05", "A06", "A07", "A08", "A09", "A10", "A11"]
@@ -53,20 +55,27 @@ for iAction in range(0, 11):
     # create new graph
     recs = []
     precs = []
+    fprate = []
+
     for iThres in range(0, 21):
         # add act_thres_pres_rec[iAction][iThres][0/1] to graph
             r = [act_thres_pres_rec[iAction][iThres][1]]
             recs.extend(r)
             p = [act_thres_pres_rec[iAction][iThres][0]]
             precs.extend(p)
-    plt.plot(thresp,recs,linestyle='-', marker='o', color='b',label='recall')
-    plt.plot(thresp,precs,linestyle='-', marker='o', color='g',label='precision')
+            fp_r = [act_thres_pres_rec[iAction][iThres][2]]
+            fprate.append(fp_r)
+
+    plt.plot(thresp,recs,linestyle='-', marker='o', color='g',label='recall')
+    plt.plot(thresp,precs,linestyle='-', marker='o', color='b',label='precision')
+    plt.plot(fprate, recs, linestyle='--', color='r', label='ROC curve')
+
     plt.xlabel('Threshold')
     plt.ylabel('Precision/Recall')
     plt.legend(loc='upper right')
     plt.title("Action: " + actions[iAction] + "\nTHRES: 0:1:0.05")
-    # plt.savefig(goal_dir + actions[iAction])
-    plt.show()
+    plt.savefig(goal_dir + 'ROC' + actions[iAction])
+    # plt.show()
     plt.close('all')
 
 # print()
