@@ -358,4 +358,25 @@ def list_ext(directory, extension):
 
     return lst, lstnot
 
+def getkey(item):
+    return item[0]
 
+
+def most_often_occurence(nlist):
+    actions = []
+    for t in nlist:
+        actions.append(t[2])
+
+    occurences = np.bincount(actions)
+    i = np.argmax(occurences)
+
+    return (i, float(np.amax(occurences)) / len(nlist))
+
+# def most_common(nlist):
+#     """ Returns  a tuple : (index of most common item , counts)"""
+#     freq = np.zeros(11)
+#     for i in range(0, len(nlist)):
+#         freq[nlist[i][2]] += 1
+#         most_freq_label = np.argmax(freq)
+#
+#     return (most_freq_label,np.amax(freq))
