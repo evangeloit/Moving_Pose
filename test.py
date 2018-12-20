@@ -6,7 +6,7 @@ import random
 start_time = time.time()
 fv_subj = np.load('fv_subj.npy')
 
-class_k5 = np.load('class_frames_k5.npy')
+# class_k5 = np.load('class_frames_k5.npy')
 
 # Build database with numerical labels
 
@@ -39,7 +39,8 @@ for income in range(0, testframes.shape[0]):
         #incoming frame Feature Vector
         fv_in = testframes[income][0]
         # print("incoming frame no:",income ,"  iSub", testframes[income][1], "  iAct", testframes[income][2] )
-        # print "ok"
+        # print("frame :", income)#,"  iSub", testframes[income][1], "  iAct", testframes[income][2] )
+
         #confidence of frame that belong to a class (frame_feature vector ,
         confidence_tuple = FrameWiseClassify.classframe(fv_in, database, k, dataPercent= partData)
 

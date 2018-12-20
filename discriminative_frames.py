@@ -7,7 +7,6 @@ import time
 from Moving_Pose_Descriptor import MP_tools2 as mpt
 from Moving_Pose_Descriptor import FrameWiseClassify as FrameWiseClassify
 import random
->>>>>>> f738050ef99a4bf3123a098a0629f294acc81ad6
 
 start_time = time.time()
 fv_subj = np.load('fv_subj.npy')
@@ -33,7 +32,6 @@ percent = 0.10 * len(randpicks)
 partData = randpicks[0:int(percent)]
 
 print
->>>>>>> f738050ef99a4bf3123a098a0629f294acc81ad6
 testframes = database.copy() # The same database i pass it as na input
 
 #compute confidence for every frame
@@ -49,7 +47,6 @@ for income in range(0, testframes.shape[0]):
 
         # for iframe in range(0, database.shape[0]):
         for iframe in partData:
->>>>>>> f738050ef99a4bf3123a098a0629f294acc81ad6
             d = [dst.euclidean(fv_in, database[iframe][0]), database[iframe][1], database[iframe][2]]
             dist.append(d)
 
