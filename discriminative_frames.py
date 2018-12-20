@@ -6,6 +6,8 @@ from scipy.spatial import distance as dst
 import time
 from Moving_Pose_Descriptor import MP_tools2 as mpt
 import Moving_Pose_Descriptor as mvp
+import random
+import math
 
 start_time = time.time()
 fv_subj = np.load('fv_subj.npy')
@@ -22,12 +24,21 @@ for iSubject in range(0, 12):
             dt = tuple((fv_subj[iSubject][iAction][iframe], iSubject, iAction))
             database.append(dt)
 
-# filter_database(isubject, database)
 database = np.array(database)
+
+# Create Random Database
+randframes = range(0,len(database))
+random.shuffle(randframes)
+
+#Percent of database
+percent = 0.10 * len(database)
+
+subrand = randframes[0:int(percent)]
+
 testframes = database.copy() # The same database i pass it as na input
 
 #compute confidence for every frame
-k = 10
+k = 10 # k nearest neighbours
 dist = []
 class_frames = []
 for income in range(0, testframes.shape[0]):
@@ -37,8 +48,8 @@ for income in range(0, testframes.shape[0]):
         fv_in = testframes[income][0]
         print("incoming frame no:",income )
 
-        for iframe in range(0, database.shape[0]):
-
+        for iframe in subrand:#range(0, database.shape[0]):
+            # d = [dst.euclidean(fv_in, database[iframe][0]), database[iframe][1], database[iframe][2]]
             d = [dst.euclidean(fv_in, database[iframe][0]), database[iframe][1], database[iframe][2]]
             dist.append(d)
 
@@ -51,6 +62,7 @@ for income in range(0, testframes.shape[0]):
         class_frames.append(cf)
 
 class_frames = np.array(class_frames)
+np.save('class_frames.npy',class_frames)
 
 print("--- %s seconds ---" % (time.time() - start_time))
 
