@@ -2,8 +2,8 @@ import numpy as np
 import json
 from scipy.ndimage import gaussian_filter1d
 import matplotlib.pyplot as plt
-import dpcore
-from munkres import Munkres # Optimization Algorithm(Hungarian Algo) / finds the global minimum
+# import dpcore
+# from munkres import Munkres # Optimization Algorithm(Hungarian Algo) / finds the global minimum
 import itertools
 import os
 from os.path import join
@@ -250,7 +250,7 @@ def plot_confusion_matrix(cm, classes,
 
 def move_rename(top_path, topf, childf=None,rename=None):
     """
-        This function moves files from a child folder to a
+        function moves files from a child folder to a
         parent folder inside a top folder. top-->parent-->child.
         Function can rename the parent folder using the 'rename'
         parameter.
@@ -371,12 +371,3 @@ def most_often_occurence(nlist):
     i = np.argmax(occurences)
 
     return (i, float(np.amax(occurences)) / len(nlist))
-
-# def most_common(nlist):
-#     """ Returns  a tuple : (index of most common item , counts)"""
-#     freq = np.zeros(11)
-#     for i in range(0, len(nlist)):
-#         freq[nlist[i][2]] += 1
-#         most_freq_label = np.argmax(freq)
-#
-#     return (most_freq_label,np.amax(freq))
