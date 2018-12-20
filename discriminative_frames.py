@@ -5,14 +5,13 @@ from scipy.spatial import distance as dst
 # from scipy import stats
 import time
 from Moving_Pose_Descriptor import MP_tools2 as mpt
-import Moving_Pose_Descriptor as mvp
+from Moving_Pose_Descriptor import FrameWiseClassify as FrameWiseClassify
 import random
-import math
+>>>>>>> f738050ef99a4bf3123a098a0629f294acc81ad6
 
 start_time = time.time()
 fv_subj = np.load('fv_subj.npy')
 
-# fv_subj_less
 #Build database with numerical labels
 
 database = []
@@ -26,15 +25,15 @@ for iSubject in range(0, 12):
 
 database = np.array(database)
 
-# Create Random Database
-randframes = range(0,len(database))
-random.shuffle(randframes)
 
-#Percent of database
-percent = 0.10 * len(database)
+#create random frame numbers based on database and keep a % of them
+randpicks = range(0, len(database))
+random.shuffle(randpicks)
+percent = 0.10 * len(randpicks)
+partData = randpicks[0:int(percent)]
 
-subrand = randframes[0:int(percent)]
-
+print
+>>>>>>> f738050ef99a4bf3123a098a0629f294acc81ad6
 testframes = database.copy() # The same database i pass it as na input
 
 #compute confidence for every frame
@@ -48,8 +47,9 @@ for income in range(0, testframes.shape[0]):
         fv_in = testframes[income][0]
         print("incoming frame no:",income )
 
-        for iframe in subrand:#range(0, database.shape[0]):
-            # d = [dst.euclidean(fv_in, database[iframe][0]), database[iframe][1], database[iframe][2]]
+        # for iframe in range(0, database.shape[0]):
+        for iframe in partData:
+>>>>>>> f738050ef99a4bf3123a098a0629f294acc81ad6
             d = [dst.euclidean(fv_in, database[iframe][0]), database[iframe][1], database[iframe][2]]
             dist.append(d)
 
