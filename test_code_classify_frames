@@ -10,12 +10,15 @@ database = np.array(database)
 
 f = incoming frame 
 
-filter_database(isubject, database)
+########################################################################
+for income frame
+
+def filter_database(testframes[income][2], database):
 
 
-def getkey(item)
-	return item[0]
+return data without subject
 
+########################################################################
 def classframe(f, database, k):
 
 	f_v_in = compute feature_vector(f)

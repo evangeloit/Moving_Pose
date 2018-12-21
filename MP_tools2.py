@@ -11,8 +11,8 @@ from os import listdir, rmdir
 from shutil import move
 import glob
 import shutil
-import re
-
+# import re
+import random
 
 def load_data(input_dir, dataset_dir):
 
@@ -371,3 +371,36 @@ def most_often_occurence(nlist):
     i = np.argmax(occurences)
 
     return (i, float(np.amax(occurences)) / len(nlist))
+
+
+def filterdatabase(testframe, database):
+    sub = testframe[1]
+    act = testframe[2]
+    extracdata = database[:, [1, 2]]
+
+    for i in range(0, extracdata.shape[0]):
+        extracdata[i][0] = abs(extracdata[i][0] - sub)
+        extracdata[i][1] = abs(extracdata[i][1] - act)
+
+    extracdata = np.sum(extracdata, axis=1)  # sum by rows
+    newdatabase = database[np.where(extracdata != 0)]  # iSub, iAct excluded
+
+    return newdatabase
+
+def randomData(newdatabase, percent=None):
+
+    """
+     inputs
+     newdatabase: database with frames as rows
+     percent : what percent of random frames you want to keep in your new database
+
+     Outputs
+     partData: Array of shuffled(random) frame indexes of the input database.
+
+     """
+    randpicks = range(0, len(newdatabase))
+    random.shuffle(randpicks)
+    percent = percent * len(randpicks)
+    partData = randpicks[0:int(percent)]
+
+    return partData
