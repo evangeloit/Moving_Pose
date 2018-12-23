@@ -29,3 +29,17 @@ def classframe(fv_in,database,k, dataPercent=None):
     confidence_tuple = mpt.most_often_occurence(dist[0:k])
 
     return confidence_tuple
+
+# @frame is one feature vector
+# @database [N][[feature vector...], subject, action]
+def classifyKNN(frame, database, k, metric):
+    distances = []
+
+    for iframe in range(0, database.shape[0]):
+        #d = dst.euclidean(frame, database[iframe][0])
+        d = metric(frame, database[iframe][0])
+        distances.append((d, database[iframe][1], database[iframe][2]))
+
+    distances.sort(key=lambda row: row[0])
+
+    return mpt.most_often_occurence(distances[0 : k])
