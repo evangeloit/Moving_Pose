@@ -12,12 +12,12 @@ import os
 from Moving_Pose_Descriptor import MP_tools2 as mpt
 from Moving_Pose_Descriptor import confmat as cfm
 from Moving_Pose_Descriptor import Threshold_Precision_Recall as TPR
-from Moving_Pose_Descriptor.heatmap import heatmap
-from Moving_Pose_Descriptor.heatmap import annotate_heatmap
-import matplotlib.pyplot as plt
-from heatmap import heatmap
-from heatmap import annotate_heatmap
-from munkres import Munkres
+# from Moving_Pose_Descriptor.heatmap import heatmap
+# from Moving_Pose_Descriptor.heatmap import annotate_heatmap
+# import matplotlib.pyplot as plt
+# from heatmap import heatmap
+# from heatmap import annotate_heatmap
+# from munkres import Munkres
 import json
 
 # Controllers
@@ -113,7 +113,7 @@ for subj in range(0,len(subj_name)):# for every subject
 # Feature Vector Array for all subjects
 fv_new = np.array(fv_all).copy() # Don't need to keep a copy!!!
 
-np.save('fv.npy', fv_subj)
+np.save('fv_subj.npy', fv_subj)
 # Feature Vector by subject
 
 ## Similarity Matrix ##
@@ -150,12 +150,12 @@ for sub in range(0, len(subj_name)):
 
 
 # mhad_average class_score
-sum_cscore = np.sum(c_score, axis=1, dtype=float)
-avg_cscore = np.divide(sum_cscore, len(subj_name))
-
-#Plots 1 vs All / Average Perforamnce to "params" path
-if params_avg[0] == 1:
-    cfm.avg_perf_savefig(avg_cscore, c_score, subj_name, params=params_avg)
+# sum_cscore = np.sum(c_score, axis=1, dtype=float)
+# avg_cscore = np.divide(sum_cscore, len(subj_name))
+#
+# #Plots 1 vs All / Average Perforamnce to "params" path
+# if params_avg[0] == 1:
+#     cfm.avg_perf_savefig(avg_cscore, c_score, subj_name, params=params_avg)
 
 #Evaluation Matrix
 # np.save('evmat.npy',evmat)

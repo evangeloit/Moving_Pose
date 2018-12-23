@@ -1,32 +1,10 @@
 import numpy as np
 from scipy.spatial import distance as dst
 from Moving_Pose_Descriptor import FrameWiseClassify as FrameWiseClassify
-from Moving_Pose_Descriptor import databaseClass
+from Moving_Pose_Descriptor import databaseModify
+from Moving_Pose_Descriptor import WeightedDistance as wd
 import functools
-
-def sum(a, b):
-    return a + b
-
-class Sum:
-    # members:
-    # x
-
-    def __init__(self, x):
-        self.x = x
-
-    def __call__(self, param):
-        return sum(self.x, param)
-
-s = Sum(23)
-
-print(s(15))
-
-s2 = functools.partial(sum, 23)
-
-print(s2(15))
-
-exit()
-
+import time
 # @filter_func function used to filter train, expecting two arguments (train, age, action)
 def benchmark(train, filter_func, test, k, metric):
     nCorrect = 0.0
@@ -52,6 +30,14 @@ def benchmark(train, filter_func, test, k, metric):
     )
 
 # TODO:
+# Feature vector Layout
+# distance weighted (w1,w2,w3,Fv1,Fv2)
+# store [score , K , (w1,w2,w3)]
+
+
+
+
+# TODO:
 # - Document feature vector format
 # - Implement different distance metrics
 #   - sum of absolute distances
@@ -74,7 +60,7 @@ def benchmark(train, filter_func, test, k, metric):
 database = np.load("db_frame_subject_action.npy")
 
 # TODO: Bump up train and test counts to (10k, 200)
-train, test = databaseClass.reduceDatabase(database, 1000, 100)
+train, test = databaseModify.reduceDatabase(database, 10000, 100)
 # TODO: Find optimal k!
 k = 20
 
@@ -91,9 +77,30 @@ k = 20
 #     f = functools.partial(filter, windowSize)
 #    benchmark(train, f, ...)
 
-for k in range(5, 21, 5):
-    result = benchmark(train, lambda x, y, z: x, test, k, dst.euclidean)
+results = []
+iRow = 0
 
-    print("K: %s" % k)
-    print("Accuracy: %s" % result[0])
-    print("Confidence: %s" % result[1])
+for wpos in range(1, 11):
+    for wvel in range(1, 11):
+        for wacc in range(1, 11):
+            for k in range(5, 21, 5):
+                wp = wpos * 0.1
+                wv = wvel * 0.1
+                wa = wacc * 0.1
+
+                wvec = wd.wvector(wp, wv, wa)
+                metric = functools.partial(wd.wdistance, wvec)
+
+                # start_time = time.time()
+                result = benchmark(train, lambda x, y, z: x, test, k, metric)
+
+                # print("--- %s seconds ---" % (time.time() - start_time))
+                # exit()
+
+                res = [result[0], wp, wv, wa, k]
+                results.append(res)
+
+
+results = np.array(results)
+np.save('best_params.npy',results)
+print()

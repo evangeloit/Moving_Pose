@@ -2,7 +2,7 @@ import numpy as np
 import json
 from scipy.ndimage import gaussian_filter1d
 import matplotlib.pyplot as plt
-# import dpcore
+import dpcore
 # from munkres import Munkres # Optimization Algorithm(Hungarian Algo) / finds the global minimum
 import itertools
 import os
@@ -101,12 +101,12 @@ def MovPoseDescriptor(p3d_gauss, StartFrame):
     # magacc = np.ndarray((vec.shape[0], 15), dtype=float)
     # magvec = np.zeros((vec.shape[0], 15), dtype=float)
     # magacc = np.zeros((vec.shape[0], 15), dtype=float)
-    magvec = np.empty((vec.shape[0], 15), np.dtype(np.float32))
-    magacc = np.empty((vec.shape[0], 15), np.dtype(np.float32))
+    magvec = np.zeros((vec.shape[0], 14), np.dtype(np.float32))
+    magacc = np.zeros((vec.shape[0], 14), np.dtype(np.float32))
 
     for xf in range(0, vec.shape[0]):
         indx = 0
-        for xp in range(0, 43, 3):
+        for xp in range(0, 42, 3):
             pointv = vec[xf, xp:xp + 3]
             pointa = acc[xf, xp:xp + 3]
             magvec[xf][indx] = np.linalg.norm(pointv)
@@ -358,8 +358,8 @@ def list_ext(directory, extension):
 
     return lst, lstnot
 
-def getkey(item):
-    return item[0]
+# def getkey(item):
+#     return item[0]
 
 
 def most_often_occurence(nlist):

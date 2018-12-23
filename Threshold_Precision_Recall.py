@@ -48,6 +48,7 @@ def precision_recall(conf_not):
     actions = ["A01", "A02", "A03", "A04", "A05", "A06", "A07", "A08", "A09", "A10", "A11"]
     thresp = np.linspace(0,1,21)
 
+    # TODO: put the directory out of the function
     goal_dir = os.getcwd() + "/plots/conf_matrix/thres_prec_rec/"
     for iAction in range(0, 11):
         # create new graph
