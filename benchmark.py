@@ -58,10 +58,10 @@ for wsize in range(5, 1000, 5):
 
                 metric = functools.partial(wd.wdistance, wvec)
 
-                start_time = time.time()
+                # start_time = time.time()
                 result = benchmark(train, filter, test, 6, metric)
 
-                print("--- %s seconds ---" % (time.time() - start_time))
+                # print("--- %s seconds ---" % (time.time() - start_time))
                 # exit()
 
                 res = [result[0], wsize]
