@@ -16,7 +16,6 @@ def benchmark(train, filter_func, test, k, metric, age_uncertainty_in_frames=0):
     for iFrame in range(0, test.shape[0]):
         # TODO: Add noise
 
-
         db = filter_func(train, noise.addnoise(test[iFrame][3],age_uncertainty_in_frames))
 
         frame = test[iFrame]
@@ -36,7 +35,7 @@ def benchmark(train, filter_func, test, k, metric, age_uncertainty_in_frames=0):
 
 database = np.load("db_frame_subject_action_age.npy")
 
-train, test = databaseModify.reduceDatabase(database, 20000, 500)
+train, test = databaseModify.reduceDatabase(database, 10000, 150)
 
 #
 # filter = functools.partial(db_filter_window.db_window, 100)
@@ -52,41 +51,42 @@ train, test = databaseModify.reduceDatabase(database, 20000, 500)
 
 results = []
 # iRow = 0
-#
-# for wpos in range(1, 11):
-#     for wvel in range(1, 11):
-#         print("%d percent done" % (10 * wpos + wvel - 11))
-#         for wacc in range(1, 11):
-#             for k in range(5, 21, 5):
-#                 wp = wpos * 0.1
-#                 wv = wvel * 0.1
-#                 wa = wacc * 0.1
+
 #
 
-age_uncertainty_in_frames = [5, 10, 15]
+# age_uncertainty_in_frames = [5, 10, 15]
+#
+# for uncertainty in [0, 5, 10, 15]:
+#
+#     for wsize in range(100, 1000, 5):
 
-for uncertainty in [0, 5, 10, 15]:
-    print(uncertainty)
-    for wsize in range(100, 1000, 5):
 
-                    print("%d percent done" % (wsize/10))
+for wpos in range(1, 11):
+        for wvel in range(1, 11):
+            print("%d percent done" % (10 * wpos + wvel - 11))
 
-                    wvec = wd.wvector(0.9, 0.1, 0.45)
+            for wacc in range(1, 11):
+                for k in range(3, 11, 1):
+                    wp = wpos * 0.1
+                    wv = wvel * 0.1
+                    wa = wacc * 0.1
 
-                    filter = functools.partial(db_filter_window.db_window, wsize)
+                    wvec = wd.wvector(wp, wv, wa)
 
                     metric = functools.partial(wd.wdistance, wvec)
 
+                    filter = functools.partial(db_filter_window.db_window, 200)
+
                     # start_time = time.time()
-                    result = benchmark(train, filter, test, 6, metric, uncertainty)
+                    result = benchmark(train, filter, test, k, metric, 15)
 
                     # print("--- %s seconds ---" % (time.time() - start_time))
                     # exit()
 
-                    res = [uncertainty, wsize, result[0]]
+                    res = [result[0], wp, wvel, wacc, k]
                     results.append(res)
 
 
 results = np.array(results)
-np.save('best_windowSize_noisy.npy',results)
+np.save('best_params_for_High_noise_fixed_size_200.npy', results)
 print()
