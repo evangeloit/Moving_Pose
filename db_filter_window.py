@@ -1,5 +1,21 @@
 import numpy as np
 
+def db_exclude(database, iSubject, iAction):
+
+    keep_frames = []
+
+    for iframe in range(0, database.shape[0]):
+
+        if database[iframe][2] != iAction or database[iframe][1] != iSubject:
+            keep_frames.append(iframe)
+
+    new = database[keep_frames]
+
+    excl_flag = False
+
+    return new , excl_flag
+
+
 def db_window(windowSize, train, age):
 
     window_range = [age - windowSize/2, age + (windowSize+1)/2]

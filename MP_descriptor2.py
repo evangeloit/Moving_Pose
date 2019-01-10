@@ -116,6 +116,9 @@ fv_new = np.array(fv_all).copy() # Don't need to keep a copy!!!
 np.save('fv_subj.npy', fv_subj)
 # Feature Vector by subject
 
+
+# TODO: Compute confidence by frame and pick frames which best represent the Action
+
 ## Similarity Matrix ##
 for fv in range(0, len(fv_new)):
     sim_f_v = squareform(pdist(fv_new[fv]))
@@ -142,7 +145,7 @@ for sub in range(0, len(subj_name)):
 
         score, class_score, missclass = cfm.Conf2Subject(subject1, subject2, dtpath, fv_1, fv_2, params=params_dtw)
         evmat[sub][sub2] = score
-        c_score[sub][sub2] = class_score # one vs all subjects for same actions
+        # c_score[sub][sub2] = class_score # one vs all subjects for same actions
 
         if sflag == 1:
             params_cmf = [score, actions, class_score, missclass, sflag, savefig_conf]
