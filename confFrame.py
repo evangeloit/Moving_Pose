@@ -19,10 +19,10 @@ data4subs = database[keepframes]
 test4subs = data4subs.copy()
 
 # Assign confidence in every frame / BEST params for mhad : [ 0.93  0.9   0.1   0.45  6.  ]
-wvec = wd.wvector(0.9, 0.1, 0.45)
+wvec = wd.wvector(1, 0.1, 0.45)
 
-# metric = functools.partial(wd.wdistance, wvec)
-metric = distance.euclidean
+metric = functools.partial(wd.wdistance, wvec)
+# metric = distance.euclidean
 filter = functools.partial(db_filter_window.db_window, 100)
 
 excl_flag = True
@@ -49,4 +49,7 @@ for iframe in range(0, test4subs.shape[0]):
 results = np.array(results)
 confDatabase = np.append(data4subs, results, axis=1)
 
+# confDataSubject
+
+np.save('data4subs_confidence.npy',confDatabase)
 print()

@@ -78,53 +78,77 @@ subj_name = mpt.AlpNumSorter(os.listdir(dtpath)) # List of Subjects in the direc
 
 c_score = np.empty((len(subj_name), len(subj_name)), np.dtype(np.float32)) # Classification scores totals
 
-for subj in range(0,len(subj_name)):# for every subject
-    a, a_no_ext = mpt.list_ext(os.path.join(dtpath, subj_name[subj]), 'json')
-    acts = mpt.AlpNumSorter(a)
-    acts_no_ext = mpt.AlpNumSorter(a_no_ext)
-    for act in range(0, len(acts)):  # for every action of a subject
-
-        dataset_dir = os.path.join(dtpath, subj_name[subj], acts[act])
-        input_dir = os.path.join(landmarks_path, acts_no_ext[act]+"_ldm.json")
-
-        ## Load data from Json ##
-        dataPoints, dataLim = mpt.load_data(input_dir, dataset_dir)
-
-        init_frame = dataLim['limits'][0]
-        last_frame = dataLim['limits'][1]
-
-        ##### Create 3D points array #####
-
-        p3d = mpt.Create3dPoints(init_frame, last_frame, dataPoints, model_name)
-
-        ## Gaussian Filter 5 by 1 in time dimension
-
-        p3d_gauss = mpt.GaussFilter3dPoints(p3d, sigma, t)
-
-        #### Create Feature Vector ####
-
-        feat_vec, vec, acc = mpt.MovPoseDescriptor(p3d_gauss, StartFrame)
-
-        fv_all.append(feat_vec)
-        # Build feature vector by subject
-        fv_np = np.array(feat_vec)
-        fv_subj[subj][act] = fv_np
-
-# Feature Vector Array for all subjects
-fv_new = np.array(fv_all).copy() # Don't need to keep a copy!!!
-
-np.save('fv_subj.npy', fv_subj)
-# Feature Vector by subject
+# for subj in range(0,len(subj_name)):# for every subject
+#     a, a_no_ext = mpt.list_ext(os.path.join(dtpath, subj_name[subj]), 'json')
+#     acts = mpt.AlpNumSorter(a)
+#     acts_no_ext = mpt.AlpNumSorter(a_no_ext)
+#     for act in range(0, len(acts)):  # for every action of a subject
+#
+#         dataset_dir = os.path.join(dtpath, subj_name[subj], acts[act])
+#         input_dir = os.path.join(landmarks_path, acts_no_ext[act]+"_ldm.json")
+#
+#         ## Load data from Json ##
+#         dataPoints, dataLim = mpt.load_data(input_dir, dataset_dir)
+#
+#         init_frame = dataLim['limits'][0]
+#         last_frame = dataLim['limits'][1]
+#
+#         ##### Create 3D points array #####
+#
+#         p3d = mpt.Create3dPoints(init_frame, last_frame, dataPoints, model_name)
+#
+#         ## Gaussian Filter 5 by 1 in time dimension
+#
+#         p3d_gauss = mpt.GaussFilter3dPoints(p3d, sigma, t)
+#
+#         #### Create Feature Vector ####
+#
+#         feat_vec, vec, acc = mpt.MovPoseDescriptor(p3d_gauss, StartFrame)
+#
+#         fv_all.append(feat_vec)
+#         # Build feature vector by subject
+#         fv_np = np.array(feat_vec)
+#         fv_subj[subj][act] = fv_np
+#
+# # Feature Vector Array for all subjects
+# fv_new = np.array(fv_all).copy() # Don't need to keep a copy!!!
+#
+# np.save('fv_subj.npy', fv_subj)
+# # Feature Vector by subject
 
 
 # TODO: Compute confidence by frame and pick frames which best represent the Action
+#Load the new frames with confidence
+data4subs = np.load('data4subs_confidence.npy')
 
-## Similarity Matrix ##
-for fv in range(0, len(fv_new)):
-    sim_f_v = squareform(pdist(fv_new[fv]))
+#filter frames by confidence
+keep_frames = []
+for  iframe in range(0, data4subs.shape[0]):
 
-    ## Similarity - Plot ##
-    mpt.DistMatPlot(sim_f_v, savefig_sim, name=dataset_s1[fv], flag='similarity', save_flag=0)
+    if data4subs[iframe][4] == 1.0:
+        keep_frames.append(iframe)
+
+mostConf = data4subs[keep_frames]
+
+
+fv_subj = np.zeros((5,5), dtype=object)
+for iSubject in range(0, 5):
+    for iAction in range(0, 5):
+        k = mostConf[(np.where((mostConf[:,1] == iSubject) & (mostConf[:,2]==iAction)))]
+        k2 = []
+        for inum in range(0, len(k)):
+            k2.append(k[inum][0])
+        k2 = np.array(k2)
+
+        fv_subj[iSubject][iAction] = k2
+
+
+# ## Similarity Matrix ##
+# for fv in range(0, len(fv_new)):
+#     sim_f_v = squareform(pdist(fv_new[fv]))
+#
+#     ## Similarity - Plot ##
+#     mpt.DistMatPlot(sim_f_v, savefig_sim, name=dataset_s1[fv], flag='similarity', save_flag=0)
 
 
 evmat = np.empty((12,12),np.dtype(np.object))

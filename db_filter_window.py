@@ -20,7 +20,7 @@ def db_window(windowSize, train, age):
 
     window_range = [age - windowSize/2, age + (windowSize+1)/2]
 
-    keep_frames =[]
+    keep_frames = []
 
     for iframe in range(0, train.shape[0]):
 
@@ -29,3 +29,4 @@ def db_window(windowSize, train, age):
             keep_frames.append(train[iframe])
 
     return np.array(keep_frames)
+
