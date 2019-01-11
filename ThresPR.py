@@ -10,6 +10,7 @@ def belongsto(idSubject, idAction, label, thres, conf):
     for iSubject in range(0, 12):
         if iSubject != idSubject:
             score = conf[idAction * 12 + idSubject][label * 12 + iSubject]
+
             scores[i] = score
             i += 1
 

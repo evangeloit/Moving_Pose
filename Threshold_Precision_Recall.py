@@ -11,11 +11,11 @@ from Moving_Pose_Descriptor import ThresPR as classify
 def precision_recall(conf_not):
 
     conf = conf_not / np.amax(conf_not)#_not normalized
-    act_thres_pres_rec = np.zeros((11, 21, 2), dtype=float)
+    act_thres_pres_rec = np.zeros((11, 21, 4), dtype=float)
     # total =(tstep[0]/tstep[1]) + 1
 
     for label in range(0, 11):
-        for t in range(0,21):
+        for t in range(0, 21):
             thres = 0.05 * t
 
             tp = 0.0
@@ -40,9 +40,14 @@ def precision_recall(conf_not):
 
                     precision = tp / (tp + fp + 0.001)
                     recall    = tp / (tp + fn + 0.001)
-
+                    fpr = fp / (fp + tn + 0.001)
+                    Accuracy = (tp + tn) / (tp + tn + fp + fn + 0.001)
                     act_thres_pres_rec[label][t][0] = precision
                     act_thres_pres_rec[label][t][1] = recall
+                    act_thres_pres_rec[label][t][2] = fpr
+                    act_thres_pres_rec[label][t][3] = Accuracy
+                    print(act_thres_pres_rec[label][t][3])
+
 
     # Plots
     actions = ["A01", "A02", "A03", "A04", "A05", "A06", "A07", "A08", "A09", "A10", "A11"]
@@ -54,14 +59,24 @@ def precision_recall(conf_not):
         # create new graph
         recs = []
         precs = []
+        fp = []
+        acc = []
         for iThres in range(0, 21):
             # add act_thres_pres_rec[iAction][iThres][0/1] to graph
                 r = [act_thres_pres_rec[iAction][iThres][1]]
                 recs.extend(r)
                 p = [act_thres_pres_rec[iAction][iThres][0]]
                 precs.extend(p)
-        plt.plot(thresp,recs,linestyle='-', marker='o', color='b',label='recall')
-        plt.plot(thresp,precs,linestyle='-', marker='o', color='g',label='precision')
+                f = [act_thres_pres_rec[iAction][iThres][2]]
+                fp.extend(f)
+                ac = [act_thres_pres_rec[iAction][iThres][3]]
+                acc.extend(ac)
+
+        plt.plot(thresp, recs, linestyle='-', marker='o', color='b', label='recall')
+        plt.plot(thresp, precs, linestyle='-', marker='o', color='g', label='precision')
+        # plt.plot(fp, recs, linestyle='--', marker='o', color='r', label='ROC')
+        plt.plot(thresp, acc, linestyle='-', marker='*', color='m', label='Accuracy')
+
         plt.xlabel('Threshold')
         plt.ylabel('Precision/Recall')
         plt.legend(loc='upper right')

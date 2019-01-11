@@ -19,7 +19,7 @@ data4subs = database[keepframes]
 test4subs = data4subs.copy()
 
 # Assign confidence in every frame / BEST params for mhad : [ 0.93  0.9   0.1   0.45  6.  ]
-wvec = wd.wvector(1, 0.1, 0.45)
+wvec = wd.wvector(1, 0.64, 0.3)
 
 metric = functools.partial(wd.wdistance, wvec)
 # metric = distance.euclidean
@@ -35,13 +35,13 @@ for iframe in range(0, test4subs.shape[0]):
     # exlude from database current subject's Action
     if excl_flag == True:
         print(test4subs[iframe][1], test4subs[iframe][2])
-        db_exclude_act , excl_flag = db_filter_window.db_exclude(data4subs, test4subs[iframe][1], test4subs[iframe][2])
+        db_exclude_act, excl_flag = db_filter_window.db_exclude(data4subs, test4subs[iframe][1], test4subs[iframe][2])
 
     # Create a new database restricted to a time window
     db = filter(db_exclude_act, test4subs[iframe][3])
 
     frame = data4subs[iframe]
-    classconf = FrameWiseClassify.classifyKNN(frame[0], db, 6, metric)
+    classconf = FrameWiseClassify.classifyKNN(frame[0], db, 3, metric)
 
     res = [classconf[1]]
     results.append(res)

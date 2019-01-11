@@ -30,7 +30,6 @@ def Conf2Subject(subject1,subject2,dtpath,fv_1,fv_2,params=None ):
 
     for sub1 in range(0, len(act_s1_not)):
         for sub2 in range(0, len(act_s2_not)):
-
             Y = cdist(fv_1[sub1], fv_2[sub2], 'euclidean')
             p, q, C, phi = mpt.dtwC(Y, 0.1)
 
@@ -125,7 +124,7 @@ def avg_perf_savefig(avg_cscore, c_score, subj_name, params=None):
 
 
 # evmat = np.load('evmat.npy')
-def evaluation_matrix(evmat,savefig=None):
+def evaluation_matrix(evmat, savefig=None):
     new1 = np.empty((132, 132), dtype=float)
 
     for iRow in range(0, 132):
@@ -135,7 +134,6 @@ def evaluation_matrix(evmat,savefig=None):
 
             iSub2 = iCol % 12
             iAct2 = int(math.floor(iCol / 12))
-
             new1[iRow][iCol] = evmat[iSub1][iSub2][iAct1][iAct2]
 
     if savefig[0]==1:
