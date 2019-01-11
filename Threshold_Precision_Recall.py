@@ -46,9 +46,8 @@ def precision_recall(conf_not):
                     act_thres_pres_rec[label][t][1] = recall
                     act_thres_pres_rec[label][t][2] = fpr
                     act_thres_pres_rec[label][t][3] = Accuracy
-                    print(act_thres_pres_rec[label][t][3])
 
-
+    # np.save('act_thres_pres_rec.npy', act_thres_pres_rec)
     # Plots
     actions = ["A01", "A02", "A03", "A04", "A05", "A06", "A07", "A08", "A09", "A10", "A11"]
     thresp = np.linspace(0,1,21)
@@ -85,4 +84,3 @@ def precision_recall(conf_not):
         # plt.show()
         plt.close('all')
 
-# print()

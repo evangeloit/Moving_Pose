@@ -23,9 +23,9 @@ def Conf2Subject(subject1,subject2,dtpath,fv_1,fv_2,params=None ):
 
     act_s1_not = mpt.AlpNumSorter(act_s1_not)
     act_s2_not = mpt.AlpNumSorter(act_s2_not)
-    print(act_s1_not)
-    print(act_s2_not)
-    print("new_pair:")
+    # print(act_s1_not)
+    # print(act_s2_not)
+    # print("new_pair:")
     score = np.empty((len(act_s1_not), len(act_s2_not)), np.dtype(np.float32))
 
     for sub1 in range(0, len(act_s1_not)):
