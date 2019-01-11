@@ -26,10 +26,12 @@ def Conf2Subject(subject1,subject2,dtpath,fv_1,fv_2,params=None ):
     print(act_s1_not)
     print(act_s2_not)
     print("new_pair:")
-    score = np.empty((len(act_s1_not), len(act_s2_not)), np.dtype(np.float32))
+    # score = np.empty((len(act_s1_not), len(act_s2_not)), np.dtype(np.float32))
 
-    for sub1 in range(0, len(act_s1_not)):
-        for sub2 in range(0, len(act_s2_not)):
+    score = np.empty((5, 5), np.dtype(np.float32))
+
+    for sub1 in range(0, 5):
+        for sub2 in range(0, 5):
             Y = cdist(fv_1[sub1], fv_2[sub2], 'euclidean')
             p, q, C, phi = mpt.dtwC(Y, 0.1)
 
@@ -125,15 +127,15 @@ def avg_perf_savefig(avg_cscore, c_score, subj_name, params=None):
 
 # evmat = np.load('evmat.npy')
 def evaluation_matrix(evmat, savefig=None):
-    new1 = np.empty((132, 132), dtype=float)
+    new1 = np.empty((16, 16), dtype=float)
 
-    for iRow in range(0, 132):
-        for iCol in range(0, 132):
-            iSub1 = iRow % 12
-            iAct1 = int(math.floor(iRow / 12))
+    for iRow in range(0, 16):
+        for iCol in range(0, 16):
+            iSub1 = iRow % 4
+            iAct1 = int(math.floor(iRow / 4))
 
-            iSub2 = iCol % 12
-            iAct2 = int(math.floor(iCol / 12))
+            iSub2 = iCol % 4
+            iAct2 = int(math.floor(iCol / 4))
             new1[iRow][iCol] = evmat[iSub1][iSub2][iAct1][iAct2]
 
     if savefig[0]==1:

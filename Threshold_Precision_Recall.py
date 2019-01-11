@@ -11,10 +11,10 @@ from Moving_Pose_Descriptor import ThresPR as classify
 def precision_recall(conf_not):
 
     conf = conf_not / np.amax(conf_not)#_not normalized
-    act_thres_pres_rec = np.zeros((11, 21, 4), dtype=float)
+    act_thres_pres_rec = np.zeros((5, 21, 4), dtype=float)
     # total =(tstep[0]/tstep[1]) + 1
 
-    for label in range(0, 11):
+    for label in range(0, 4):
         for t in range(0, 21):
             thres = 0.05 * t
 
@@ -23,8 +23,8 @@ def precision_recall(conf_not):
             tn = 0.0
             fn = 0.0
 
-            for iSubject in range(0, 12):
-                for iAction in range(0, 11):
+            for iSubject in range(0, 4):
+                for iAction in range(0, 4):
                     answer = classify.belongsto(iSubject, iAction, label, thres, conf)
 
                     if (answer): # positive
@@ -46,7 +46,6 @@ def precision_recall(conf_not):
                     act_thres_pres_rec[label][t][1] = recall
                     act_thres_pres_rec[label][t][2] = fpr
                     act_thres_pres_rec[label][t][3] = Accuracy
-                    print(act_thres_pres_rec[label][t][3])
 
 
     # Plots
@@ -55,7 +54,7 @@ def precision_recall(conf_not):
 
     # TODO: put the directory out of the function
     goal_dir = os.getcwd() + "/plots/conf_matrix/thres_prec_rec/"
-    for iAction in range(0, 11):
+    for iAction in range(0, 5):
         # create new graph
         recs = []
         precs = []

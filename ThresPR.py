@@ -4,12 +4,12 @@ import numpy as np
 # conf = normalize(conf_1, axis=0, norm='max')
 
 def belongsto(idSubject, idAction, label, thres, conf):
-    scores = np.empty(11, dtype=float)
+    scores = np.empty(4, dtype=float)
 
     i = 0
-    for iSubject in range(0, 12):
+    for iSubject in range(0, 4):
         if iSubject != idSubject:
-            score = conf[idAction * 12 + idSubject][label * 12 + iSubject]
+            score = conf[idAction * 4 + idSubject][label * 4 + iSubject]
 
             scores[i] = score
             i += 1
