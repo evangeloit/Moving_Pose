@@ -1,11 +1,3 @@
-# MP_ :
-# 1) Imports (3d) landmarks results from json
-# 2) Creates an array of the (3D) landmarks
-# 3) Filters all landmarks with a gaussian filter 5by1 in time dimension
-# 4) Calculates Feature Vector for every given dataset
-# 5) Creates a self Similarity matrix and saves it in a figure on demand (sflag)
-# 6) Compares every subject vs all subjects for all actions and saves results in path
-
 import numpy as np
 from scipy.spatial.distance import pdist, squareform, cdist
 import os
@@ -131,7 +123,7 @@ data4subs = np.load('data4subs_confidence.npy')
 keep_frames = []
 for  iframe in range(0, data4subs.shape[0]):
 
-    if data4subs[iframe][4] == 1.0:
+    if data4subs[iframe][5] == 1.0:
         keep_frames.append(iframe)
 
 mostConf = data4subs[keep_frames]
