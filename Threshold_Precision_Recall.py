@@ -8,13 +8,13 @@ from Moving_Pose_Descriptor import ThresPR as classify
 # conf = normalize(conf_1, norm='max')
 # conf = conf_1 / np.amax(conf_1)
 
-def precision_recall(conf_not):
+def precision_recall(conf_not,subjects, actions,actions_labels):
 
     conf = conf_not / np.amax(conf_not)#_not normalized
-    act_thres_pres_rec = np.zeros((5, 21, 4), dtype=float)
+    act_thres_pres_rec = np.zeros((actions, 21, 4), dtype=float)
     # total =(tstep[0]/tstep[1]) + 1
 
-    for label in range(0, 4):
+    for label in range(0, actions):
         for t in range(0, 21):
             thres = 0.05 * t
 
@@ -23,9 +23,9 @@ def precision_recall(conf_not):
             tn = 0.0
             fn = 0.0
 
-            for iSubject in range(0, 4):
-                for iAction in range(0, 4):
-                    answer = classify.belongsto(iSubject, iAction, label, thres, conf)
+            for iSubject in range(0, subjects):
+                for iAction in range(0, actions):
+                    answer = classify.belongsto(iSubject, iAction, subjects, label, thres, conf)
 
                     if (answer): # positive
                         if (iAction == label):
@@ -46,15 +46,17 @@ def precision_recall(conf_not):
                     act_thres_pres_rec[label][t][1] = recall
                     act_thres_pres_rec[label][t][2] = fpr
                     act_thres_pres_rec[label][t][3] = Accuracy
+                    # print('Action : ',label,
+                    #       ' Thres: ',thres,' Accuracy : ',act_thres_pres_rec[label][t][3])
 
 
     # Plots
-    actions = ["A01", "A02", "A03", "A04", "A05", "A06", "A07", "A08", "A09", "A10", "A11"]
+    actions_labels = actions_labels[0:actions]
     thresp = np.linspace(0,1,21)
 
     # TODO: put the directory out of the function
     goal_dir = os.getcwd() + "/plots/conf_matrix/thres_prec_rec/"
-    for iAction in range(0, 5):
+    for iAction in range(0, actions):
         # create new graph
         recs = []
         precs = []
@@ -79,9 +81,11 @@ def precision_recall(conf_not):
         plt.xlabel('Threshold')
         plt.ylabel('Precision/Recall')
         plt.legend(loc='upper right')
-        plt.title("Action: " + actions[iAction] + "\nTHRES: 0:1:0.05")
-        plt.savefig(goal_dir + actions[iAction])
+        plt.title("Action: " + actions_labels[iAction] + "\nTHRES: 0:1:0.05")
+        plt.savefig(goal_dir + actions_labels[iAction])
         # plt.show()
         plt.close('all')
+
+        return act_thres_pres_rec
 
 # print()

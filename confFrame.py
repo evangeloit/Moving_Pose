@@ -52,8 +52,7 @@ for iframe in range(0, test4subs.shape[0]):
 
 # #Add 5th column to database with the total Length of the sequence
 # lenOfsequence = [databaseModify.db_lengthOfSequence(data4subs, test4subs[iframe][1], test4subs[iframe][2]) for iframe in range(0, test4subs.shape[0])]
-#
-#
+
 # lenOfsequence = np.array(lenOfsequence)
 # confidence = np.array(confidence)
 confDatabase = np.column_stack((data4subs, confidence))

@@ -117,7 +117,8 @@ fv_new = np.array(fv_all).copy() # Don't need to keep a copy!!!
 
 # TODO: Compute confidence by frame and pick frames which best represent the Action
 #Load the new frames with confidence
-data4subs = np.load('data4subs_confidence.npy')
+data4subs = np.load('data4subs_lenOfSeq_confidence.npy')
+# data4subs = np.load('data4subs_confidence.npy')
 
 #filter frames by confidence
 keep_frames = []
@@ -129,7 +130,7 @@ for  iframe in range(0, data4subs.shape[0]):
 mostConf = data4subs[keep_frames]
 
 
-fv_subj = np.zeros((5,5), dtype=object)
+fv_subj = np.zeros((5, 5), dtype=object)
 for iSubject in range(0, 5):
     for iAction in range(0, 5):
         k = mostConf[(np.where((mostConf[:,1] == iSubject) & (mostConf[:,2]==iAction)))]
@@ -142,6 +143,9 @@ for iSubject in range(0, 5):
 
 evmat = np.empty((5, 5),np.dtype(np.object))
 subj_name = subj_name[0:5]
+
+print(fv_subj.shape[0])
+print(fv_subj.shape[1])
 
 for sub in range(0, len(subj_name)):
     ct = 0
