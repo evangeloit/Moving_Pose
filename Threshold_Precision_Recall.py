@@ -86,6 +86,4 @@ def precision_recall(conf_not,subjects, actions,actions_labels):
         # plt.show()
         plt.close('all')
 
-        return act_thres_pres_rec
-
-# print()
+        # return act_thres_pres_rec

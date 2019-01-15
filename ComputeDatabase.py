@@ -6,7 +6,7 @@ from Moving_Pose_Descriptor import databaseModify
 from Moving_Pose_Descriptor import db_filter_window
 from Moving_Pose_Descriptor import WeightedDistance as wd
 from Moving_Pose_Descriptor import confmat as cfm
-from Moving_Pose_Descriptor import Threshold_Precision_Recall as TPR
+from Moving_Pose_Descriptor import Threshold_Precision_Recall as tpr
 import functools
 import json
 
@@ -134,17 +134,17 @@ def db_reduce(database, numofSubs, numofActs):
 
 def db_lenOfseq(database):
     # Add Length of Sequence to Database
-    lenOfsequence = [databaseModify.db_lengthOfSequence(reducedDatabase, reducedDatabase[iframe][1], reducedDatabase[iframe][2]) for iframe in range(0, reducedDatabase.shape[0])]
+    lenOfsequence = [databaseModify.db_lengthOfSequence(database, database[iframe][1], database[iframe][2]) for iframe in range(0, database.shape[0])]
     lenOfsequence = np.array(lenOfsequence)
 
     database_lenofSeq = np.column_stack((database, lenOfsequence))
 
     return database_lenofSeq
 
-def db_frameConfidence(database, db_test, relativeWindow, k):
+def db_frameConfidence(database, db_test, relativeWindow, k, wvec):
 
-    # Assign confidence in every frame / BEST params for mhad : [ 0.93  0.9   0.1   0.45  6.  ]
-    wvec = wd.wvector(1, 0.64, 0.3)
+    # # Assign confidence in every frame / BEST params for mhad : [ 0.93  0.9   0.1   0.45  6.  ]
+    # wvec = wd.wvector(1, 0.64, 0.3)
 
     metric = functools.partial(wd.wdistance, wvec)
     # metric = distance.euclidean
@@ -244,6 +244,7 @@ def computeDTW(fv_subj, dtpath, sflag=None,params_dtw=None ,savefig_conf=None):
                 cfm.cfm_savefig(subject1, subject2, params_cmf)
     return evmat
 
+################### CALLS #####################
 
 #Full Database
 database, fv_subj = db_construct(dtpath, landmarks_path, model_name)
@@ -256,14 +257,21 @@ reducedDatabase = db_reduce(database, subjects, actions)
 #Add Length of Sequence to Database
 database_lenofSeq = db_lenOfseq(reducedDatabase)
 
-#Compute confidence for every frame (KNN)/paramas:[train, test, relativeWindowsize(0 - 1), k nns]
-relativeWindow = 0.7
-k = 3
-conf_database = db_frameConfidence(database_lenofSeq, database_lenofSeq, relativeWindow, k)
+#Compute confidence for every frame (KNN)/paramas:[train, test, relativeWindowsize(0 - 2), k nns]
+relativeWindow = 1.4
+k = 6
+# Assign confidence in every frame / BEST params for mhad : [ 0.93  0.9   0.1   0.45  6.  ]
+wvec = wd.wvector(1, 0.64, 0.3)
+conf_database = db_frameConfidence(database_lenofSeq, database_lenofSeq, relativeWindow, k, wvec)
 
 # Filter database by confidence[keep most confident frames] /export feature vector by sub for most conf frames
 keepConfidence = 1.0
 mostConf, fv_subj_conf = filter_byConfidence(conf_database, keepConfidence)
+
+database_diff = conf_database.shape[0] - mostConf.shape[0]
+print("Database all frames: ", conf_database.shape[0])
+print("Database Conf frames: ", mostConf.shape[0])
+print("Frame Loss : ", database_diff)
 
 #Compute DTW
 evmat = computeDTW(fv_subj_conf, dtpath, sflag=sflag, params_dtw=params_dtw, savefig_conf=savefig_conf)
@@ -274,7 +282,7 @@ eval_mat = cfm.evaluation_matrix(evmat, subjects, actions, savefig=params_evalma
 # np.save('eval_mat.npy',eval_mat)
 
 #Calculate Accuracy - Precision - Recall - Threshold: 0:1:0.05
-act_thres_pres_rec = TPR.precision_recall(eval_mat, subjects, actions, actions_labels)
+tpr.precision_recall(eval_mat, subjects, actions, actions_labels)
 
 
 print()
