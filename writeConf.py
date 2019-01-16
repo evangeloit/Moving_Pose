@@ -8,7 +8,7 @@ from Moving_Pose_Descriptor import databaseModify
 # img = np.zeros((512,512,3), np.uint8)
 conf = np.load('db_opencv_conf.npy')
 print()
-def load_images_from_folder(folder , destanation_path ,conf, isub, iact):
+def load_images_from_folder(src , destanation_path ,conf, isub, iact):
     images = []
 
     # Settings
@@ -18,14 +18,14 @@ def load_images_from_folder(folder , destanation_path ,conf, isub, iact):
     fontColor = (255, 0, 127)
     lineType = 2
 
-    path = os.listdir(folder)
-    path.sort()
+    folder = os.listdir(src)
+    folder.sort()
     last = databaseModify.db_lengthOfSequence(conf, isub, iact)
-    path = path[0:last]
+    path = folder[0:last]
     count = 0
 
     for filename in path:
-        img = cv2.imread(os.path.join(folder, filename))
+        img = cv2.imread(os.path.join(src, filename))
         cv2.putText(img, 'Confidence: ' + str(conf[count, 5]),
                     bottomLeftCornerOfText,
                     font,
@@ -38,7 +38,7 @@ def load_images_from_folder(folder , destanation_path ,conf, isub, iact):
         # cv2.waitKey(0)
         # Save image
         count += 1
-        cv2.imwrite(destanation_path+ "/"+ str(count) +"_out.jpg", img)
+        cv2.imwrite(os.path.join(destanation_path, str(count) + "_out.jpg"), img)
 
         if img is not None:
             images.append(img)
