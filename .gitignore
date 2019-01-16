@@ -2,5 +2,6 @@
 /plots
 /.idea
 /test_sequences
+/images
 *.pyc
 *.html
