@@ -2,6 +2,7 @@ from Moving_Pose_Descriptor import ComputeDatabase as cdb
 from Moving_Pose_Descriptor import WeightedDistance as wd
 from Moving_Pose_Descriptor import confmat as cfm
 from Moving_Pose_Descriptor import Threshold_Precision_Recall as tpr
+from Moving_Pose_Descriptor import frameDraw
 import os
 import numpy as np
 
@@ -9,6 +10,7 @@ import numpy as np
 dtpath = '/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/data/'
 landmarks_path = "/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/rs/Human_tracking/results_camera_invariant/"
 model_name = 'mh_body_male_customquat'
+dest_path = "/home/evangeloit/Desktop/GitBlit_Master/Moving_Pose_Descriptor/test_sequences/"
 
 # sflag =  0 : Turn off plots , 1: save figures to path. Global parameter
 sflag = 0
@@ -38,30 +40,31 @@ actions_labels = ["A01", "A02", "A03", "A04", "A05", "A06", "A07", "A08", "A09",
 
 ################### CALLS #####################
 
-#Full Database
+# Full Database
 database, fv_subj = cdb.db_construct(dtpath, landmarks_path, model_name)
 
 # fullDatabase = cdb.db_lenOfseq(database)
-#Reduce database size by sub and act. Counting from 1
+# Reduce database size by sub and act. Counting from 1
 subjects = 2
 actions = 3
 reducedDatabase = cdb.db_reduce(database, subjects, actions)
 
-#Add Length of Sequence to Database
+# Add Length of Sequence to Database
 database_lenofSeq = cdb.db_lenOfseq(reducedDatabase)
 
-#Compute confidence for every frame (KNN)/paramas:[train, test, relativeWindowsize(0 - 2), k nns]
+# Compute confidence for every frame (KNN)/paramas:[train, test, relativeWindowsize(0 - 2), k nns]
 relativeWindow = 1.4
 k = 10
 # Assign confidence in every frame / BEST params for mhad : [ 0.93  0.9   0.1   0.45  6.  ]
 wvec = wd.wvector(1, 0.64, 0.3)
 conf_database = cdb.db_frameConfidence(database_lenofSeq, database_lenofSeq, relativeWindow, k, wvec)
 
-# np.save('db_opencv_conf.npy', conf_database)
-#Plot Confidence to frame opencv
+# np.save('db_opencv_conf.npy',conf_database)
 
+# Draw confidence on image
+images = frameDraw.ConfidenceImage(dtpath, dest_path, conf_database, subjects, actions)
 
-
+print()
 # # Filter database by confidence[keep most confident frames] /export feature vector by sub for most conf frames
 # keepConfidence = 1.0
 # mostConf, fv_subj_conf = cdb.filter_byConfidence(conf_database, keepConfidence)

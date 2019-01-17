@@ -1,11 +1,12 @@
 import numpy as np
-import os
 from Moving_Pose_Descriptor import MP_tools2 as mpt
 from Moving_Pose_Descriptor import FrameWiseClassify
 from Moving_Pose_Descriptor import databaseModify
 from Moving_Pose_Descriptor import db_filter_window
 from Moving_Pose_Descriptor import WeightedDistance as wd
 from Moving_Pose_Descriptor import confmat as cfm
+import cv2
+import os
 from Moving_Pose_Descriptor import Threshold_Precision_Recall as tpr
 import functools
 import json
@@ -245,6 +246,44 @@ def computeDTW(fv_subj, dtpath, sflag=None,params_dtw=None ,savefig_conf=None):
                 params_cmf = [score, actions, class_score, missclass, sflag, savefig_conf]
                 cfm.cfm_savefig(subject1, subject2, params_cmf)
     return evmat
+
+def load_images_from_folder(src , destanation_path ,conf, isub, iact):
+    images = []
+
+    # Settings
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    bottomLeftCornerOfText = (10, 70)
+    fontScale = 1
+    fontColor = (255, 0, 127)
+    lineType = 2
+
+    folder = os.listdir(src)
+    folder.sort()
+    last = databaseModify.db_lengthOfSequence(conf, isub, iact)
+    path = folder[0:last]
+    count = 0
+
+    for filename in path:
+        img = cv2.imread(os.path.join(src, filename))
+        cv2.putText(img, 'Confidence: ' + str(conf[count, 5]),
+                    bottomLeftCornerOfText,
+                    font,
+                    fontScale,
+                    fontColor,
+                    lineType)
+
+        # Display the image
+        cv2.imshow("img", img)
+        # cv2.waitKey(0)
+        # Save image
+        count += 1
+        cv2.imwrite(os.path.join(destanation_path, str(count) + "_out.jpg"), img)
+
+        if img is not None:
+            images.append(img)
+
+    return images
+
 
 # ################### CALLS #####################
 #

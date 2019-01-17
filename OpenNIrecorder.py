@@ -14,7 +14,7 @@ def write_files(dev):
     print(" Quit :'q' , Record Frames(png) : 'p', Record (oni): 'o', Stop Recording: 's' ")
 
     # if user == 'r':
-    openni2.IMAGE_REGISTRATION_DEPTH_TO_COLOR
+    # openni2.IMAGE_REGISTRATION_DEPTH_TO_COLOR
     depth_stream = dev.create_depth_stream()
     color_stream = dev.create_color_stream()
     print(dev.get_sensor_info(openni2.SENSOR_DEPTH))
@@ -31,10 +31,8 @@ def write_files(dev):
     color_stream.start()
     dev.set_image_registration_mode(True)
 
-
     shot_idx = 0
     is_png = False
-    is_oni = False
 
     while True:
         frame_depth = depth_stream.read_frame()
@@ -55,6 +53,8 @@ def write_files(dev):
         if ch == ord('p'):
             print("type: png")
             is_png = True
+        elif ch == ord('s'):
+            is_png = False
 
         if ch == ord('o'):
             print("type: oni")
@@ -71,9 +71,6 @@ def write_files(dev):
             # print(fn_depth, 'saved')
             # print(fn_color, 'saved')
             shot_idx += 1
-
-        if ch == ord('s'):
-            is_png = False
 
         if ch == ord('q'):
             print("exiting...")
