@@ -3,7 +3,6 @@ import json
 from scipy.ndimage import gaussian_filter1d
 import matplotlib.pyplot as plt
 import dpcore
-# from munkres import Munkres # Optimization Algorithm(Hungarian Algo) / finds the global minimum
 import itertools
 import os
 from os.path import join
@@ -148,7 +147,7 @@ def DistMatPlot(f_v, path, q=None, p=None,dtwscore=None, name=None, flag=None, s
 
         goal_dir = os.path.join(path)
         fig, ax = plt.subplots()
-        cax = ax.matshow(f_v, interpolation='None')
+        cax = ax.imshow(f_v, cmap='jet', interpolation='None')
 
         ax.grid(True)
         plt.xlabel('frames')
@@ -164,43 +163,20 @@ def DistMatPlot(f_v, path, q=None, p=None,dtwscore=None, name=None, flag=None, s
             plt.title('Distance Matrix\n Comparison ' + name)
         elif flag == 'DTW':
             # ax.imshow(f_v, interpolation='nearest', cmap='binary')
-            ax.hold(True)
+            # ax.hold(True)
             ax.plot(q, p, '-r')
-            ax.hold(False)
+            # ax.hold(False)
             ax.autoscale(enable=True, axis='both', tight=True)
             my_file = name + '_dtw_path'
-            plt.title('MP - DTW Score: '+str(dtwscore))
+            plt.title('MP - DTW Score: '+ str(dtwscore))
 
         plt.close('all')
         # print(goal_dir + my_file)
         fig.savefig(goal_dir + my_file, bbox_inches='tight')
 
-
     else:
         # print('Passing Plot...')
         pass
-
-def Optimize(score):
-    """
-    The Munkres module provides an implementation of the Munkres algorithm
-    (also called the Hungarian algorithm or the Kuhn-Munkres algorithm),
-    useful for solving the Assignment Problem.
-    Use it to compute the lowest cost assignment from a cost matrix.
-    """
-    matrix = score.copy()
-    # matrix[10][10]= 100000
-    murk = Munkres()
-    indexes = murk.compute(matrix)
-    # print (matrix, 'Lowest cost through this matrix:')
-    total = 0
-
-    for row, column in indexes:
-        value = matrix[row][column]
-        total += value
-        print '(%d, %d) -> %d' % (row, column, value)
-        print 'total cost: %d' % total
-
-    return indexes
 
 def plot_confusion_matrix(cm, classes,
                           normalize=False,
@@ -242,7 +218,6 @@ def plot_confusion_matrix(cm, classes,
     plt.ylabel(axs[1])
     plt.xlabel(axs[0])
     plt.tight_layout()
-
     return cbar
 
 

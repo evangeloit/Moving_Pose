@@ -2,6 +2,7 @@
 /plots
 /.idea
 /test_sequences
-/images
+/Mydataset
+/res
 *.pyc
 *.html

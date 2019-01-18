@@ -64,8 +64,8 @@ def write_files(dev):
             print(rec.start())
 
         if is_png == True:
-            fn_depth = 'images/mydata_depth_%03d.png' % shot_idx
-            fn_color = 'images/mydata_color_%03d.png' % shot_idx
+            fn_depth = 'Mydataset/data/mydata_depth_%03d.png' % shot_idx
+            fn_color = 'Mydataset/data/mydata_color_%03d.png' % shot_idx
             cv2.imwrite(fn_depth, depth_array, [cv2.IMWRITE_PNG_COMPRESSION, 0])
             cv2.imwrite(fn_color, color_array, [cv2.IMWRITE_PNG_COMPRESSION, 0])
             # print(fn_depth, 'saved')

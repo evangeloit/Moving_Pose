@@ -7,43 +7,12 @@ from Moving_Pose_Descriptor import WeightedDistance as wd
 from Moving_Pose_Descriptor import confmat as cfm
 import cv2
 import os
-from Moving_Pose_Descriptor import Threshold_Precision_Recall as tpr
+# from Moving_Pose_Descriptor import Threshold_Precision_Recall as tpr
 import functools
-import json
-
-#
-# #Paths
-# dtpath = '/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/data/'
-# landmarks_path = "/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/rs/Human_tracking/results_camera_invariant/"
-# model_name = 'mh_body_male_customquat'
-#
-# # sflag =  0 : Turn off plots , 1: save figures to path. Global parameter
-# sflag = 0
-#
-# # Similarity Matrix -- save Figure path
-# savefig_sim = os.getcwd() + "/plots/conf_matrix/MP_sim_mat/"
-#
-# # Compare one set with all the other datasets -- save Figure path
-# savefig_comp = os.getcwd() + "/plots/conf_matrix/MP_comp_mat/"
-#
-# # DTW figures path
-# savefig_dtw = os.getcwd() + "/plots/conf_matrix/dtw_res_conf/"
-# params_dtw = [0, savefig_dtw] # sflag 0 or 1 , savefig_dtw = path to save plot /
-#
-# # Confusion matrix save figures path
-# savefig_conf = os.getcwd() + "/plots/conf_matrix/conf/"
-#
-# # 1 vs all / Average dataset performance save figs path
-# savefig_avg = os.getcwd() + "/plots/conf_matrix/"
-# params_avg = [0, savefig_avg]
-#
-# savefig_evalmat =  os.getcwd() + "/plots/conf_matrix/"
-# params_evalmat = [0, savefig_avg]
-#
-# actions_labels = ["A01", "A02", "A03", "A04", "A05", "A06", "A07", "A08", "A09", "A10", "A11"]
-# # global actions_labels
-
-def db_construct(dtpath, landmarks_path, model_name):
+# import json
+from scipy.spatial.distance import pdist, squareform
+# import itertools
+def db_construct(dtpath, landmarks_path, model_name, savefig=None):
     print("Constructing Database from files")
     """FEATURE VECTOR CALCULATION"""
     # Gaussian Filter Parameters
@@ -62,6 +31,9 @@ def db_construct(dtpath, landmarks_path, model_name):
     a, a_no_ext = mpt.list_ext(os.path.join(dtpath, subj_name[0]), 'json')
     acts = mpt.AlpNumSorter(a)
     num_of_acts = len(mpt.AlpNumSorter(a_no_ext))
+
+    #Similarity matrix plot
+    dtnames = mpt.AlpNumSorter(a_no_ext)
 
     fv_all = []
     # Feature vector by subject initialiazation
@@ -116,7 +88,7 @@ def db_construct(dtpath, landmarks_path, model_name):
 
     np.save('newDatabase', database)
 
-    return database ,fv_subj
+    return database, fv_subj
 
 
 def db_reduce(database, numofSubs, numofActs):
@@ -207,7 +179,7 @@ def filter_byConfidence(conf_database, confidence):
 
     return mostConf, fv_subj
 
-def computeDTW(fv_subj, dtpath, sflag=None,params_dtw=None ,savefig_conf=None):
+def computeDTW(fv_subj, dtpath, action_labels, sflag=None,params_dtw=None ,savefig_conf=None):
 
     # print(fv_subj.shape[0], fv_subj.shape[1])
 
@@ -220,6 +192,7 @@ def computeDTW(fv_subj, dtpath, sflag=None,params_dtw=None ,savefig_conf=None):
     subj_name = subj_name[0:subjects]
     print(subj_name)
 
+    action_labels = action_labels[0: SubjectsActions[1]]
 
     evmat = np.empty((subjects, subjects), np.dtype(np.object))
 
@@ -239,12 +212,13 @@ def computeDTW(fv_subj, dtpath, sflag=None,params_dtw=None ,savefig_conf=None):
             ct = ct + 1
             # Create confusion matrix for every pair of subjects
 
-            score, class_score, missclass = cfm.Conf2Subject(subject1, subject2, SubjectsActions, dtpath, fv_1, fv_2,params=params_dtw)
+            score, class_score, missclass = cfm.Conf2Subject(subject1, subject2, SubjectsActions, dtpath, fv_1, fv_2, params=params_dtw)
             evmat[sub][sub2] = score
 
             if sflag == 1:
-                params_cmf = [score, actions, class_score, missclass, sflag, savefig_conf]
+                params_cmf = [score, action_labels, class_score, missclass, sflag, savefig_conf]
                 cfm.cfm_savefig(subject1, subject2, params_cmf)
+
     return evmat
 
 def load_images_from_folder(src , destanation_path ,conf, isub, iact):
@@ -284,46 +258,14 @@ def load_images_from_folder(src , destanation_path ,conf, isub, iact):
 
     return images
 
+def self_similarity(fv_subj,action_labels, subject_labels, savefig=None):
 
-# ################### CALLS #####################
-#
-# #Full Database
-# database, fv_subj = db_construct(dtpath, landmarks_path, model_name)
-#
-# #Reduce database size by sub and act. Counting from 1
-# subjects = 5
-# actions = 5
-# reducedDatabase = db_reduce(database, subjects, actions)
-#
-# #Add Length of Sequence to Database
-# database_lenofSeq = db_lenOfseq(reducedDatabase)
-#
-# #Compute confidence for every frame (KNN)/paramas:[train, test, relativeWindowsize(0 - 2), k nns]
-# relativeWindow = 1.4
-# k = 6
-# # Assign confidence in every frame / BEST params for mhad : [ 0.93  0.9   0.1   0.45  6.  ]
-# wvec = wd.wvector(1, 0.64, 0.3)
-# conf_database = db_frameConfidence(database_lenofSeq, database_lenofSeq, relativeWindow, k, wvec)
-#
-# # Filter database by confidence[keep most confident frames] /export feature vector by sub for most conf frames
-# keepConfidence = 1.0
-# mostConf, fv_subj_conf = filter_byConfidence(conf_database, keepConfidence)
-#
-# database_diff = conf_database.shape[0] - mostConf.shape[0]
-# print("Database all frames: ", conf_database.shape[0])
-# print("Database Conf frames: ", mostConf.shape[0])
-# print("Frame Loss : ", database_diff)
-#
-# #Compute DTW
-# evmat = computeDTW(fv_subj_conf, dtpath, sflag=sflag, params_dtw=params_dtw, savefig_conf=savefig_conf)
-#
-# #Evaluation Matrix
-# # np.save('evmat.npy',evmat)
-# eval_mat = cfm.evaluation_matrix(evmat, subjects, actions, savefig=params_evalmat)
-# # np.save('eval_mat.npy',eval_mat)
-#
-# #Calculate Accuracy - Precision - Recall - Threshold: 0:1:0.05
-# tpr.precision_recall(eval_mat, subjects, actions, actions_labels)
-#
-#
-# print()
+    # ## Similarity Matrix ##
+    
+    for isub in range(0,len(fv_subj)):
+        for iact in range(0,len(fv_subj[isub])):
+
+            sim_f_v = squareform(pdist(fv_subj[isub][iact]))
+
+            ## Similarity - Plot ##
+            mpt.DistMatPlot(sim_f_v, savefig, name=subject_labels[isub]+'_'+action_labels[iact], flag='similarity', save_flag=1)
