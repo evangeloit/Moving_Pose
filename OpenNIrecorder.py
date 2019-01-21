@@ -52,6 +52,7 @@ def write_files(dev):
 
         if ch == ord('p'):
             print("type: png")
+            shot_idx = 0
             is_png = True
         elif ch == ord('s'):
             is_png = False

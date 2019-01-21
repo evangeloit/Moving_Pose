@@ -13,7 +13,7 @@ sflag = 0
 
 #mydataset
 savefig_evalmat = os.getcwd() + "/plots/mydataset_plots/"
-params_evalmat = [1, savefig_evalmat]
+params_evalmat = [0, savefig_evalmat]
 
 #mydataset
 savefig_dtw = os.getcwd() + "/plots/mydataset_plots/dtw/"
@@ -40,10 +40,9 @@ actions = fv_subj_conf.shape[1]
 #Compute DTW
 evmat = cdb.computeDTW(fv_subj_conf, dtpath, actions_labels, sflag=sflag, params_dtw=params_dtw, savefig_conf=savefig_conf)
 
-
 #Evaluation Matrix
 eval_mat = cfm.evaluation_matrix(evmat, subjects, actions, savefig_eval=params_evalmat)
-np.save('eval_mat_new.npy', eval_mat)
+# np.save('eval_mat_new.npy', eval_mat)
 
 tpr.precision_recall(eval_mat, subjects, actions, actions_labels, save_fig_tpr=params_tpr)
 print()

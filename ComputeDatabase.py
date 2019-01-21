@@ -161,16 +161,16 @@ def filter_byConfidence(conf_database, confidence):
 
     mostConf = conf_database[keep_frames]
 
-    subjects = mostConf[-1, 1] + 1
-    actions = mostConf[-1, 2] + 1
+    nSubjects = mostConf[-1, 1] + 1
+    nActions = mostConf[-1, 2] + 1
 
-    # print(subjects)
-    # print(actions)
+    # print(nSubjects)
+    # print(nActions)
     #Build Feature vector by subject with most confident frames
-    fv_subj = np.zeros((subjects, actions), dtype=object)
+    fv_subj = np.zeros((nSubjects, nActions), dtype=object)
 
-    for iSubject in range(0, subjects):
-        for iAction in range(0, actions):
+    for iSubject in range(0, nSubjects):
+        for iAction in range(0, nActions):
             k = mostConf[(np.where((mostConf[:, 1] == iSubject) & (mostConf[:, 2] == iAction)))]
             k2 = []
             for inum in range(0, len(k)):
@@ -185,24 +185,24 @@ def computeDTW(fv_subj, dtpath, action_labels, sflag=None,params_dtw=None ,savef
 
     # print(fv_subj.shape[0], fv_subj.shape[1])
 
-    subjects = fv_subj.shape[0]
-    actions = fv_subj.shape[1]
-    SubjectsActions = [subjects, actions]
+    nSubjects = fv_subj.shape[0]
+    nActions = fv_subj.shape[1]
+    SubjectsActions = [nSubjects, nActions]
 
     # Subjects
     subj_name = mpt.AlpNumSorter(os.listdir(dtpath))  # List of Subjects in the directory
-    subj_name = subj_name[0:subjects]
+    subj_name = subj_name[0:nSubjects]
     print(subj_name)
 
     action_labels = action_labels[0: SubjectsActions[1]]
     print(action_labels)
 
-    evmat = np.zeros((subjects, subjects), np.dtype(np.object))
+    evmat = np.zeros((nSubjects, nSubjects), np.dtype(np.object))
 
 
-    for sub in range(0, subjects):
+    for sub in range(0, nSubjects):
         ct = 0
-        for sub2 in range(0, subjects):
+        for sub2 in range(0, nSubjects):
 
             # Subjects from subj_name list
             subject1 = subj_name[sub]
@@ -272,3 +272,20 @@ def self_similarity(fv_subj,action_labels, subject_labels, savefig=None):
 
             ## Similarity - Plot ##
             mpt.DistMatPlot(sim_f_v, savefig, name=subject_labels[isub]+'_'+action_labels[iact], flag='similarity', save_flag=1)
+
+def classScore(conf_mat_in, nSubjects):
+
+    confusion_matrix = conf_mat_in.copy()
+    np.fill_diagonal(confusion_matrix, float('inf'))
+    hits = 0
+    for row in enumerate(confusion_matrix):
+        answer = np.argmin(row[1], axis=0) / nSubjects
+        correct = row[0] / nSubjects
+
+        if answer == correct:
+            hits += 1
+
+    class_score = (float(hits) / confusion_matrix.shape[0]) * 100
+    print "Class Score : %f" % (class_score)
+
+    return class_score
