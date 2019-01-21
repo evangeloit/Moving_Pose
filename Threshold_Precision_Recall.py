@@ -1,5 +1,5 @@
 import numpy as np
-import os
+# import os
 import matplotlib.pyplot as plt
 #from sklearn.preprocessing import normalize
 from Moving_Pose_Descriptor import ThresPR as classify
@@ -27,13 +27,13 @@ def precision_recall(conf_not,subjects, actions, actions_labels, save_fig_tpr=No
                 for iAction in range(0, actions):
                     answer = classify.belongsto(iSubject, iAction, subjects, label, thres, conf)
 
-                    if (answer): # positive
-                        if (iAction == label):
+                    if answer: # positive
+                        if iAction == label:
                             tp += 1
                         else:
                             fp += 1
                     else: # negative
-                        if (iAction != label):
+                        if iAction != label:
                             tn += 1
                         else:
                             fn += 1
@@ -77,17 +77,28 @@ def precision_recall(conf_not,subjects, actions, actions_labels, save_fig_tpr=No
                     ac = [act_thres_pres_rec[iAction][iThres][3]]
                     acc.extend(ac)
 
-            plt.plot(thresp, recs, linestyle='-', marker='o', color='b', label='recall')
-            plt.plot(thresp, precs, linestyle='-', marker='o', color='g', label='precision')
-            # plt.plot(fp, recs, linestyle='--', marker='o', color='r', label='ROC')
-            plt.plot(thresp, acc, linestyle='-', marker='*', color='m', label='Accuracy')
+            # plt.plot(thresp, recs, linestyle='-', marker='o', color='b', label='recall')
+            # plt.plot(thresp, precs, linestyle='-', marker='o', color='g', label='precision')
+            # # plt.plot(fp, recs, linestyle='--', marker='o', color='r', label='ROC')
+            # plt.plot(thresp, acc, linestyle='-', marker='*', color='m', label='Accuracy')
 
-            plt.xlabel('Threshold')
-            plt.ylabel('Precision/Recall')
-            plt.legend(loc='upper right')
-            plt.title("Action: " + actions_labels[iAction] + "\nTHRES: 0:1:0.05")
-            plt.savefig(goal_dir + actions_labels[iAction])
-            # plt.show()
-            plt.close('all')
+            fig2, ax2 = plt.subplots()
+            ax2.plot(thresp, recs, linestyle='-', marker='o', color='b', label='recall')
+            ax2.plot(thresp, precs, linestyle='-', marker='o', color='g', label='precision')
+            # ax.plot(fp, recs, linestyle='--', marker='o', color='r', label='ROC')
+            ax2.plot(thresp, acc, linestyle='-', marker='*', color='m', label='Accuracy')
 
-            # return act_thres_pres_rec
+            # plt.xlabel('Threshold')
+            # plt.ylabel('Precision/Recall')
+            # plt.legend(loc='upper right')
+            # plt.title("Action: " + actions_labels[iAction] + "\nTHRES: 0:1:0.05")
+            # plt.savefig(goal_dir + actions_labels[iAction])
+
+
+            ax2.set_title("Action: " + actions_labels[iAction] + "\nTHRES: 0:1:0.05")
+            ax2.set_xlabel('Threshold')
+            ax2.set_ylabel('Precision/Recall')
+            ax2.set_aspect(aspect='auto')
+            fig2.tight_layout()
+            fig2.savefig(goal_dir + actions_labels[iAction])
+

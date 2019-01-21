@@ -95,58 +95,67 @@ def cfm_savefig(subject1,subject2,params_cmf):
         my_file = name + '_cfm'
 
         plt.savefig(goal_dir + my_file)
-        plt.close('all')
+        # plt.close('all')
 
-def avg_perf_savefig(avg_cscore, c_score, subj_name, params=None):
-    """ Saves 2 figures at specified path using params key= list [0 or 1,save_path_string]
-        -first element of the "params" list 1 or 0 activates or deactivates plot function.
-        -second element is the string which specifies save path for the plot.
-        fig1: Class scores 1 subj vs all subs
-        fig2 : Average performance save fig """
-    if params[0] == 1:
+# def avg_perf_savefig(avg_cscore, c_score, subj_name, params=None):
+#     """ Saves 2 figures at specified path using params key= list [0 or 1,save_path_string]
+#         -first element of the "params" list 1 or 0 activates or deactivates plot function.
+#         -second element is the string which specifies save path for the plot.
+#         fig1: Class scores 1 subj vs all subs
+#         fig2 : Average performance save fig """
+#     if params[0] == 1:
+#
+#         goal_dir = os.path.join(params[1])
+#
+#         # plot 1 subj vs all
+#         name1 = '1vsAll'
+#         axis1 = ['subjects', 'subjects']
+#         mpt.plot_confusion_matrix(c_score, classes=subj_name, normalize=False, title='mhad class score per subject', axs=axis1)
+#         plt.savefig(goal_dir + name1)
+#         plt.close('all')
+#
+#         # # Plot Average Performance in dataset
+#         name2 = 'avg_performance_dtset'
+#         col_label = ['average']
+#         img_view = np.reshape(avg_cscore, (12, 1))
+#         im, cbar= heatmap(img_view, subj_name, col_label, cmap='jet')
+#         texts = annotate_heatmap(im, valfmt="{x:.2f} ")
+#         plt.axes().set_aspect('auto')
+#         plt.title('Average Performance for every Subject\n Mhad_dataset')
+#         plt.savefig(goal_dir + name2)
+#         plt.close('all')
 
-        goal_dir = os.path.join(params[1])
 
-        # plot 1 subj vs all
-        name1 = '1vsAll'
-        axis1 = ['subjects', 'subjects']
-        mpt.plot_confusion_matrix(c_score, classes=subj_name, normalize=False, title='mhad class score per subject', axs=axis1)
-        plt.savefig(goal_dir + name1)
-        plt.close('all')
-
-        # # Plot Average Performance in dataset
-        name2 = 'avg_performance_dtset'
-        col_label = ['average']
-        img_view = np.reshape(avg_cscore, (12, 1))
-        im, cbar= heatmap(img_view, subj_name, col_label, cmap='jet')
-        texts = annotate_heatmap(im, valfmt="{x:.2f} ")
-        plt.axes().set_aspect('auto')
-        plt.title('Average Performance for every Subject\n Mhad_dataset')
-        plt.savefig(goal_dir + name2)
-        plt.close('all')
-
-
-def evaluation_matrix(evmat, subjects, actions, savefig=None):
+def evaluation_matrix(evmat, subjects, actions, savefig_eval=None):
     dims = subjects * actions
     new1 = np.zeros((dims, dims), dtype=float)
 
     for iRow in range(0, dims):
         for iCol in range(0, dims):
             iSub1 = iRow % subjects
-            iAct1 = int(math.floor(iRow / actions))
+            iAct1 = int(math.floor(iRow / subjects))
 
             iSub2 = iCol % subjects
-            iAct2 = int(math.floor(iCol / actions))
+            iAct2 = int(math.floor(iCol / subjects))
             new1[iRow][iCol] = evmat[iSub1][iSub2][iAct1][iAct2]
 
-    if savefig[0] == 1:
+    if savefig_eval[0] == 1:
+        # figname = "Conf_Matrix_Total"
+        # plt.imshow(new1, cmap='jet')
+        # plt.title("Confusion Matrix\nDataset(" + str(subjects)+ " Subjects x "+ str(actions) + " Actions)")
+        # plt.axes().set_aspect('auto')
+        # plt.xlabel("Actions")
+        # plt.ylabel("Actions")
+        # plt.savefig(savefig[1] + figname)
+        # plt.close('all')
         figname = "Conf_Matrix_Total"
-        plt.imshow(new1, cmap='jet')
-        plt.title("Confusion Matrix\nMhad Dataset(12 Subjects x 11 Actions)")
-        plt.axes().set_aspect('auto')
-        plt.xlabel("Actions")
-        plt.ylabel("Actions")
-        plt.savefig(savefig[1] + figname)
-        plt.close('all')
+        fig1, ax1 = plt.subplots()
+        ax1.imshow(new1, cmap='jet')
+        ax1.set_title("Confusion Matrix\nDataset(" + str(subjects) + " Subjects x " + str(actions) + " Actions)")
+        ax1.set_xlabel("Actions")
+        ax1.set_ylabel("Actions")
+        ax1.set_aspect(aspect='auto')
+        fig1.tight_layout()
+        fig1.savefig(savefig_eval[1] + figname)
 
     return new1

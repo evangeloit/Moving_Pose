@@ -33,7 +33,7 @@ def db_construct(dtpath, landmarks_path, model_name, savefig=None):
     num_of_acts = len(mpt.AlpNumSorter(a_no_ext))
 
     #Similarity matrix plot
-    dtnames = mpt.AlpNumSorter(a_no_ext)
+
 
     fv_all = []
     # Feature vector by subject initialiazation
@@ -88,11 +88,13 @@ def db_construct(dtpath, landmarks_path, model_name, savefig=None):
 
     np.save('newDatabase', database)
 
+    database = database[0:-1]
+
     return database, fv_subj
 
 
 def db_reduce(database, numofSubs, numofActs):
-    print("Reducins Database in " + str(numofSubs) + " Subjects / "+ str(numofActs) + " Actions")
+    print("Reducing Database in " + str(numofSubs) + " Subjects / "+ str(numofActs) + " Actions")
     numofActs = numofActs - 1
     numofSubs = numofSubs - 1
     # Reduce database to "Num" subjects "Num" Actions each
@@ -185,7 +187,7 @@ def computeDTW(fv_subj, dtpath, action_labels, sflag=None,params_dtw=None ,savef
 
     subjects = fv_subj.shape[0]
     actions = fv_subj.shape[1]
-    SubjectsActions = [subjects ,actions]
+    SubjectsActions = [subjects, actions]
 
     # Subjects
     subj_name = mpt.AlpNumSorter(os.listdir(dtpath))  # List of Subjects in the directory
@@ -193,8 +195,9 @@ def computeDTW(fv_subj, dtpath, action_labels, sflag=None,params_dtw=None ,savef
     print(subj_name)
 
     action_labels = action_labels[0: SubjectsActions[1]]
+    print(action_labels)
 
-    evmat = np.empty((subjects, subjects), np.dtype(np.object))
+    evmat = np.zeros((subjects, subjects), np.dtype(np.object))
 
 
     for sub in range(0, subjects):
@@ -261,7 +264,7 @@ def load_images_from_folder(src , destanation_path ,conf, isub, iact):
 def self_similarity(fv_subj,action_labels, subject_labels, savefig=None):
 
     # ## Similarity Matrix ##
-    
+
     for isub in range(0,len(fv_subj)):
         for iact in range(0,len(fv_subj[isub])):
 
