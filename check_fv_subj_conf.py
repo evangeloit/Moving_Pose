@@ -9,7 +9,7 @@ from Moving_Pose_Descriptor import Threshold_Precision_Recall as tpr
 dtpath = '/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/data/'
 
 # sflag =  0 : Turn off plots , 1: save figures to path. Global parameter
-sflag = 0
+sflag = 1
 
 #mydataset
 savefig_evalmat = os.getcwd() + "/plots/mydataset_plots/"
@@ -24,7 +24,7 @@ savefig_conf = os.getcwd() + "/plots/mydataset_plots/confusion_matrix/"
 
 #Threshold precision recall savefig
 savefig_tpr = os.getcwd() + "/plots/mydataset_plots/TPR/"
-params_tpr = [1, savefig_tpr]
+params_tpr = [0, savefig_tpr]
 
 subject_labels = ["S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09", "S10", "S11", "S12"]
 actions_labels = ["A01", "A02", "A03", "A04", "A05", "A06", "A07", "A08", "A09", "A10", "A11"]

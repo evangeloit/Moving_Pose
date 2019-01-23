@@ -50,7 +50,7 @@ savefig_conf = os.getcwd() + "/plots/mydataset_plots/confusion_matrix/"
 
 #mydataset
 savefig_evalmat = os.getcwd() + "/plots/mydataset_plots/"
-params_evalmat = [0, savefig_evalmat]
+params_evalmat = [1, savefig_evalmat]
 
 #Threshold precision recall savefig
 #mhad
@@ -58,7 +58,7 @@ params_evalmat = [0, savefig_evalmat]
 
 #mydataset
 savefig_tpr = os.getcwd() + "/plots/mydataset_plots/TPR/"
-params_tpr = [1, savefig_tpr]
+params_tpr = [0, savefig_tpr]
 
 subject_labels = ["S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09", "S10", "S11", "S12"]
 actions_labels = ["A01", "A02", "A03", "A04", "A05", "A06", "A07", "A08", "A09", "A10", "A11"]
@@ -120,7 +120,7 @@ else:
 
 #Compute DTW
 # evmat = cdb.computeDTW(fv_subj_conf, dtpath, actions_labels, sflag=sflag, params_dtw=params_dtw, savefig_conf=savefig_conf)
-evmat = cdb.computeDTW(fv_subj, dtpath, actions_labels, sflag=sflag, params_dtw=params_dtw, savefig_conf=savefig_conf)
+evmat = cdb.computeDTW(fv_subj_modified, dtpath, actions_labels, sflag=sflag, params_dtw=params_dtw, savefig_conf=savefig_conf)
 
 #Evaluation Matrix
 # np.save('evmat.npy',evmat)

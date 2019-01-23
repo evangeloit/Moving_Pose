@@ -3,6 +3,7 @@ import cv2
 import time
 from primesense import openni2
 from primesense import _openni2 as c_api
+import os
 
 # OPENNI_REDIST_DIR = "/home/evangeloit/Desktop/OpenNI-Linux-x64-2.2/Redist"
 
@@ -12,6 +13,15 @@ def write_files(dev):
     """
     # user = raw_input("Press 'r' to START recording ...")
     print(" Quit :'q' , Record Frames(png) : 'p', Record (oni): 'o', Stop Recording: 's' ")
+
+    data_path = 'Mydataset/data/'
+    seq = 'basilis'
+
+    try:
+        os.makedirs(data_path + seq)
+    except OSError:
+        if not os.path.isdir(data_path + seq):
+            raise
 
     # if user == 'r':
     # openni2.IMAGE_REGISTRATION_DEPTH_TO_COLOR
@@ -45,8 +55,9 @@ def write_files(dev):
         color_array = np.ndarray((frame_color.height, frame_color.width, 3), dtype=np.uint8, buffer=frame_color_data)
         color_array = cv2.cvtColor(color_array, cv2.COLOR_BGR2RGB)
 
-        cv2.imshow('Depth', depth_array)
         cv2.imshow('Color', color_array)
+        cv2.imshow('Depth', depth_array*10)
+
 
         ch = 0xFF & cv2.waitKey(1)
 
@@ -65,8 +76,8 @@ def write_files(dev):
             print(rec.start())
 
         if is_png == True:
-            fn_depth = 'Mydataset/data/mydata_depth_%03d.png' % shot_idx
-            fn_color = 'Mydataset/data/mydata_color_%03d.png' % shot_idx
+            fn_depth = data_path+seq+'/mydata_depth_%03d.png' % shot_idx
+            fn_color = data_path+seq+'/mydata_color_%03d.png' % shot_idx
             cv2.imwrite(fn_depth, depth_array, [cv2.IMWRITE_PNG_COMPRESSION, 0])
             cv2.imwrite(fn_color, color_array, [cv2.IMWRITE_PNG_COMPRESSION, 0])
             # print(fn_depth, 'saved')
