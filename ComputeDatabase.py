@@ -46,7 +46,8 @@ def db_construct(dtpath, landmarks_path, model_name, savefig=None):
         for act in range(0, len(acts)):  # for every action of a subject
 
             dataset_dir = os.path.join(dtpath, subj_name[subj], acts[act])
-            input_dir = os.path.join(landmarks_path, acts_no_ext[act]+"_ldm.json")
+            # input_dir = os.path.join(landmarks_path, acts_no_ext[act]+"_ldm.json")
+            input_dir = os.path.join(landmarks_path, acts_no_ext[act]+"_states_ldm.json")
 
             ## Load data from Json ##
             dataPoints, dataLim = mpt.load_data(input_dir, dataset_dir)

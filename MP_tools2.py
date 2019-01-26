@@ -26,6 +26,8 @@ def load_data(input_dir, dataset_dir):
 
 
 def Create3dPoints(init_frame, last_frame, data, model_name):
+    #TODO: pick the modelname dynamicaly from every results file[_ldm.json]
+    #model_name = data['models]
     points = []
     for i in range(init_frame, last_frame):
         strnum = str(i)

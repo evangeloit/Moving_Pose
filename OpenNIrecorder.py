@@ -15,7 +15,7 @@ def write_files(dev):
     print(" Quit :'q' , Record Frames(png) : 'p', Record (oni): 'o', Stop Recording: 's' ")
 
     data_path = 'Mydataset/data/'
-    seq = 'basilis'
+    seq = 'new'
 
     try:
         os.makedirs(data_path + seq)
@@ -24,7 +24,7 @@ def write_files(dev):
             raise
 
     # if user == 'r':
-    # openni2.IMAGE_REGISTRATION_DEPTH_TO_COLOR
+    # openni2.IMAGE_REGISTRATION_DEPTH_TO_COLO
     depth_stream = dev.create_depth_stream()
     color_stream = dev.create_color_stream()
     print(dev.get_sensor_info(openni2.SENSOR_DEPTH))

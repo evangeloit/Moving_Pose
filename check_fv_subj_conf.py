@@ -6,14 +6,15 @@ from Moving_Pose_Descriptor import Threshold_Precision_Recall as tpr
 # import matplotlib.pyplot as plt
 
 
-dtpath = '/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/data/'
+# dtpath = '/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/data/'
+dtpath = '/home/evangeloit/Desktop/GitBlit_Master/Moving_Pose_Descriptor/Mydataset/data/'
 
 # sflag =  0 : Turn off plots , 1: save figures to path. Global parameter
-sflag = 1
+sflag = 0
 
 #mydataset
 savefig_evalmat = os.getcwd() + "/plots/mydataset_plots/"
-params_evalmat = [0, savefig_evalmat]
+params_evalmat = [1, savefig_evalmat]
 
 #mydataset
 savefig_dtw = os.getcwd() + "/plots/mydataset_plots/dtw/"
@@ -26,9 +27,12 @@ savefig_conf = os.getcwd() + "/plots/mydataset_plots/confusion_matrix/"
 savefig_tpr = os.getcwd() + "/plots/mydataset_plots/TPR/"
 params_tpr = [0, savefig_tpr]
 
-subject_labels = ["S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09", "S10", "S11", "S12"]
-actions_labels = ["A01", "A02", "A03", "A04", "A05", "A06", "A07", "A08", "A09", "A10", "A11"]
+# subject_labels = ["S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09", "S10", "S11", "S12"]
+# actions_labels = ["A01", "A02", "A03", "A04", "A05", "A06", "A07", "A08", "A09", "A10", "A11"]
 
+#Mydataset
+subject_labels = ["S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09", "S10"]
+actions_labels = ["A01", "A02", "A03", "A04", "A05", "A06"]
 
 fv_subj_conf = np.load('fv_subj_conf.npy')
 

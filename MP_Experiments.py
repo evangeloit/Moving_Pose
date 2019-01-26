@@ -5,7 +5,7 @@ from Moving_Pose_Descriptor import MP_tools2 as mpt
 import PythonModel3dTracker.Paths as Paths
 import PythonModel3dTracker.PythonModelTracker.TrackingResults.ModelTrackingResults as MTR
 import json
-
+from Moving_Pose_Descriptor import databaseModify
 package_path = os.environ['mvpd']
 
 landmarks_source = ['gt', 'detections', 'openpose', 'json_openpose'][2] # [3]
@@ -29,11 +29,15 @@ objective_params = {
 }
 
 #Datasets Path
-dtpath = '/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/data/'
+# dtpath = '/home/evangeloit/Desktop/GitBlit_Master/PythonModel3dTracker/Data/data/'
+dtpath = '/home/evangeloit/Desktop/GitBlit_Master/Moving_Pose_Descriptor/Mydataset/data/'
+
 
 #Results Paths
-results_path = "Human_tracking/results_normal/"
-results_cam_inv = "Human_tracking/results_camera_invariant/"
+# results_path = "Human_tracking/results_normal/"
+# results_cam_inv = "Human_tracking/results_camera_invariant/"
+results_path = "Mydataset/res/results_normal/"
+results_cam_inv = "Mydataset/res/results_camera_invariant/"
 
 
 # 
@@ -69,14 +73,20 @@ results_cam_inv = "Human_tracking/results_camera_invariant/"
 #     'mhad_s10_a04'
 # ]
 
-mod_name = ["mh_body_male_customquat"]
+# mod_name = ["mh_body_male_customquat"]
+
+mod_name = ["mh_body_male_custom_1050"]
+
 # datasets = dtlist.datasets_list(dtpath)
 
 #Open mhad dataset jsonfile
-with open(os.path.join(os.environ['mvpd'],"dataset.json")) as f:
-    datasets = mpt.AlpNumSorter(list(json.load(f)))
+# with open(os.path.join(os.environ['mvpd'],"dataset.json")) as f:
+#     datasets = mpt.AlpNumSorter(list(json.load(f)))
+
+datasets = databaseModify.db_from_path(dtpath, export=False)
+
 #take out specific actions
-print(datasets)
+# print(datasets)
 print(len(datasets))
 
 k = len(datasets)
@@ -119,10 +129,13 @@ for (dataset, model_name), i in \
         if rep == sel_rep:
             # if p < lp: p = lp
             # Results Filename
-            res_filename = os.path.join(Paths.results, results_path + "/{0}_states.json")
+            # res_filename = os.path.join(Paths.results, results_path + "/{0}_states.json")
+            res_filename = os.path.join(package_path, results_path + "/{0}_states.json")
             res_filename = res_filename.format(dataset)
 
-            new_res = os.path.join(Paths.results, results_cam_inv + "/{0}_states.json")
+            # new_res = os.path.join(Paths.results, results_cam_inv + "/{0}_states.json")
+            new_res = os.path.join(package_path, results_cam_inv + "/{0}_states.json")
+
             new_res = new_res.format(dataset)
             print '{0} -- {1} -- d: {2}, m:{3}, results:{4}'. \
                 format(rep, i, dataset, model_name, res_filename)
