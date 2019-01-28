@@ -66,8 +66,8 @@ params_tpr = [0, savefig_tpr]
 # subject_labels = ["S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09", "S10", "S11", "S12"]
 
 #Mydataset
-subject_labels = ["S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09", "S10"]
-actions_labels = ["A01", "A02", "A03", "A04", "A05", "A06"]
+subject_labels = ["S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09"]
+actions_labels = ["A01", "A02", "A03", "A04", "A05"]
 
 # Choose most Confident frames for Classification
 preprocess = False
@@ -79,8 +79,8 @@ database, fv_subj = cdb.db_construct(dtpath, landmarks_path, model_name, savefig
 
 # # fullDatabase = cdb.db_lenOfseq(database)
 
-nSubjects = 10
-nActions = 6
+nSubjects = 9
+nActions = 4
 
 if preprocess:
 #####################################################################################################
@@ -96,13 +96,15 @@ if preprocess:
     k = 10
     # Assign confidence in every frame / BEST params for mhad : [ 0.93  0.9   0.1   0.45  6.  ]
     wvec = wd.wvector(1, 0.64, 0.3)
+    # wvec = wd.wvector(0.93, 0.9, 0.45)
+
     conf_database = cdb.db_frameConfidence(database_lenofSeq, database_lenofSeq, relativeWindow, k, wvec)
 
     # Draw confidence on image
     # images = frameDraw.ConfidenceImage(dtpath, dest_path, conf_database, nSubjects, nActions)
 
     # Filter database by confidence[keep most confident frames] /export feature vector by sub for most conf frames
-    keepConfidence = 0.7
+    keepConfidence = 0.8
     mostConf, fv_subj_modified = cdb.filter_byConfidence(conf_database, keepConfidence)
     # np.save('db_opencv_conf.npy',conf_database)
     np.save('fv_subj_conf.npy', fv_subj_modified)

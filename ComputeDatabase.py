@@ -57,7 +57,7 @@ def db_construct(dtpath, landmarks_path, model_name, savefig=None):
 
             ##### Create 3D points array #####
 
-            p3d = mpt.Create3dPoints(init_frame, last_frame, dataPoints, model_name)
+            p3d = mpt.Create3dPoints(init_frame, last_frame, dataPoints)
 
             ## Gaussian Filter 5 by 1 in time dimension
 

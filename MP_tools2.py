@@ -25,14 +25,14 @@ def load_data(input_dir, dataset_dir):
     return data, dataLims
 
 
-def Create3dPoints(init_frame, last_frame, data, model_name):
+def Create3dPoints(init_frame, last_frame, data):
     #TODO: pick the modelname dynamicaly from every results file[_ldm.json]
-    #model_name = data['models]
+    model_name = data['models']
     points = []
     for i in range(init_frame, last_frame):
         strnum = str(i)
         frames = []
-        for item in data['landmarks'][strnum][model_name]:
+        for item in data['landmarks'][strnum][model_name[0]]:
             frames.extend(item)
 
         points.append(frames)
