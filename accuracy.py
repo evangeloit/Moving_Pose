@@ -27,7 +27,7 @@ np.fill_diagonal(confusion_matrix, float('inf'))
 # precision = tp / (tp + fp)
 # recall = tp / (tp + fn)
 
-perf = []
+perf = [] # Acc/ Prec/ Rec per class
 for classes in range(0, nActions):
     for row in enumerate(confusion_matrix):
 
@@ -51,7 +51,28 @@ for classes in range(0, nActions):
     acc = (tp + tn) / (tp + tn + fp + fn)
     prec = tp / (tp + fp)
     rec = tp / (tp + fn)
+    perf.append((acc, prec, rec))
 
-    perf.append((acc,prec,rec))
+acctot = (tp + tn) / (tp + tn + fp + fn)
+prectot = tp / (tp + fp)
+rectot = tp / (tp + fn)
 
-print()
+
+performance = np.array(perf)
+performanceRound = np.round(performance, decimals=2)
+avgPerf = np.mean(performance, axis=0)
+F1Score = 2*((prec * rec)/(prec+rec))
+
+print("Total")
+print("Accuracy:%.3f " % acctot, "Precision:%.3f " % prectot, "Recall:%.3f " % rectot)
+
+print("Per Class")
+print("Action1: ", performanceRound[0, :])
+print("Action2: ", performanceRound[1, :])
+print("Action3: ", performanceRound[2, :])
+print("Action4: ", performanceRound[3, :])
+
+print("Average of the classes above")
+print("Average Accuracy:%.3f " % avgPerf[0], "Average Precision:%.3f " % avgPerf[1], "Average Recall:%.3f " % avgPerf[2])
+
+print("F1_Score: %.3f " % F1Score)

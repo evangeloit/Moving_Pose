@@ -289,4 +289,63 @@ def classScore(conf_mat_in, nSubjects):
     class_score = (float(hits) / confusion_matrix.shape[0]) * 100
     print "Class Score : %f" % (class_score)
 
-    return class_score
+    return class_score, hits
+
+def accuracy_precision(conf_mat_in, nSubjects, nActions):
+    confusion_matrix = conf_mat_in.copy()
+
+    np.fill_diagonal(confusion_matrix, float('inf'))
+
+    tp = 0.0
+    fp = 0.0
+    tn = 0.0
+    fn = 0.0
+
+    perf = []  # Acc/ Prec/ Rec per class
+    for classes in range(0, nActions):
+        for row in enumerate(confusion_matrix):
+
+            groundtruth = (classes == row[0] / nSubjects)  # -> true/false (should)
+
+            # correct = row[0] / nSubjects
+            ind = np.argmin(row[1], axis=0)
+            predict = ((ind / nSubjects) == classes)
+
+            if groundtruth:
+                if groundtruth == predict:  # (groundtruth: yes, predictor: yes)
+                    tp += 1
+                else:  # (groundtruth: yes, predictor: no)
+                    fn += 1
+            else:  # negative
+                if groundtruth != predict:  # (groundtruth: no, predictor: yes)
+                    fp += 1
+                else:  # (groundtruth: no, predictor: no)
+                    tn += 1
+
+        acc = (tp + tn) / (tp + tn + fp + fn)
+        prec = tp / (tp + fp)
+        rec = tp / (tp + fn)
+
+        perf.append((acc, prec, rec))
+
+    total = [acc, prec, rec]
+    perClass = np.array(perf)
+    perClassRound = np.round(perClass, decimals=3)
+    avgPerf = np.mean(perClass, axis=0)
+    F1Score = 2 * ((prec * rec) / (prec + rec))
+
+    print("Total")
+    print("Accuracy:%.3f " % acc, "Precision:%.3f " % prec, "Recall:%.3f " % rec)
+
+    print("Per Class")
+    print("Action1: ", perClassRound[0, :])
+    print("Action2: ", perClassRound[1, :])
+    print("Action3: ", perClassRound[2, :])
+    print("Action4: ", perClassRound[3, :])
+
+    print("Average of the classes above")
+    print("Average Accuracy:%.3f " % avgPerf[0], "Average Precision:%.3f " % avgPerf[1], "Average Recall:%.3f " % avgPerf[2])
+
+    print("F1_Score: ", F1Score)
+
+    return perClass, total ,tp

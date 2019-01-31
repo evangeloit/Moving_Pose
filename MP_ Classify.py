@@ -130,15 +130,17 @@ else:
 # evmat = cdb.computeDTW(fv_subj_conf, dtpath, actions_labels, sflag=sflag, params_dtw=params_dtw, savefig_conf=savefig_conf)
 evmat = cdb.computeDTW(fv_subj_modified, dtpath, actions_labels, sflag=sflag, params_dtw=params_dtw, savefig_conf=savefig_conf)
 
-#Evaluation Matrix
-# np.save('evmat.npy',evmat)
+# Evaluation Matrix
 confusion_matrix_all = cfm.evaluation_matrix(evmat, nSubjects, nActions, savefig_eval=params_evalmat)
 np.save('eval_mat_new.npy', confusion_matrix_all)
 
 # Dataset Classification Score
 class_score = cdb.classScore(confusion_matrix_all, nSubjects)
 
-#Calculate Accuracy - Precision - Recall - Threshold: 0:1:0.05
+# Accuracy - Precision - Recall [Confusion_Matrix Total / Per Class]
+perClass, total = cdb.accuracy_precision(confusion_matrix_all, nSubjects, nActions)
+
+# Threshold: 0:1:0.05 - Calculate Accuracy - Precision - Recall
 tpr.precision_recall(confusion_matrix_all, nSubjects, nActions, actions_labels, save_fig_tpr=params_tpr)
 
 print()
