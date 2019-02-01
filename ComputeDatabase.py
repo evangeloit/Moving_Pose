@@ -296,13 +296,13 @@ def accuracy_precision(conf_mat_in, nSubjects, nActions):
 
     np.fill_diagonal(confusion_matrix, float('inf'))
 
-    tp = 0.0
-    fp = 0.0
-    tn = 0.0
-    fn = 0.0
-
     perf = []  # Acc/ Prec/ Rec per class
     for classes in range(0, nActions):
+        tp = 0.0
+        fp = 0.0
+        tn = 0.0
+        fn = 0.0
+        tps = 0
         for row in enumerate(confusion_matrix):
 
             groundtruth = (classes == row[0] / nSubjects)  # -> true/false (should)
@@ -325,17 +325,14 @@ def accuracy_precision(conf_mat_in, nSubjects, nActions):
         acc = (tp + tn) / (tp + tn + fp + fn)
         prec = tp / (tp + fp)
         rec = tp / (tp + fn)
-
+        tps += tp
         perf.append((acc, prec, rec))
 
-    total = [acc, prec, rec]
+
     perClass = np.array(perf)
     perClassRound = np.round(perClass, decimals=3)
     avgPerf = np.mean(perClass, axis=0)
     F1Score = 2 * ((prec * rec) / (prec + rec))
-
-    print("Total")
-    print("Accuracy:%.3f " % acc, "Precision:%.3f " % prec, "Recall:%.3f " % rec)
 
     print("Per Class")
     print("Action1: ", perClassRound[0, :])
@@ -348,4 +345,4 @@ def accuracy_precision(conf_mat_in, nSubjects, nActions):
 
     print("F1_Score: ", F1Score)
 
-    return perClass, total ,tp
+    return perClass, tps

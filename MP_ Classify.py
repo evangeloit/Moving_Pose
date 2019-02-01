@@ -136,11 +136,11 @@ np.save('eval_mat_new.npy', confusion_matrix_all)
 
 # Dataset Classification Score
 class_score = cdb.classScore(confusion_matrix_all, nSubjects)
-
+print "Class_Score : %.3f" % class_score
 # Accuracy - Precision - Recall [Confusion_Matrix Total / Per Class]
 perClass, total = cdb.accuracy_precision(confusion_matrix_all, nSubjects, nActions)
 
 # Threshold: 0:1:0.05 - Calculate Accuracy - Precision - Recall
-tpr.precision_recall(confusion_matrix_all, nSubjects, nActions, actions_labels, save_fig_tpr=params_tpr)
+# tpr.precision_recall(confusion_matrix_all, nSubjects, nActions, actions_labels, save_fig_tpr=params_tpr)
 
 print()
