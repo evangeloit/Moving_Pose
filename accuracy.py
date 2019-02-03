@@ -1,17 +1,19 @@
 import numpy as np
 import random
 
+# TODO: normalize confusion matrix
 confusion_matrix = np.load('eval_mat_new.npy')
 
 nSubjects = 9
 nActions = 4
 
 np.fill_diagonal(confusion_matrix, float('inf'))
-perf = np.zeros((4, 3), dtype=object)
-class_perf = np.zeros((4, 3), dtype=object)
+class_perf = np.zeros((nActions, 3), dtype=object)
 heatmap = np.zeros((nActions, nActions))
+heatmapBinary = np.zeros(4)
 
-for iter in range(0, 1):
+
+for iter in range(0, 1000):
 
     indices = [random.randrange(0, 8), random.randrange(9, 17), random.randrange(18, 26), random.randrange(27, 35)]
 
@@ -35,11 +37,16 @@ for iter in range(0, 1):
             running_class = row_index / nSubjects
 
             predict = np.argmin(row_rand_elements, axis=0)
+
             # Update Heatmap
-            heatmap[running_class][predict] += 1
+            heatmap[running_class][predict] += 1.0
 
             groundtruth = (action == row_index / nSubjects)# -> true/false (should)
             predict = (predict == action)
+
+            if predict == groundtruth:
+                heatmapBinary[action] += predict
+
 
             # if groundtruth:
             #     if groundtruth == predict: # (groundtruth: yes, predictor: yes)

@@ -289,7 +289,7 @@ def classScore(conf_mat_in, nSubjects):
     class_score = (float(hits) / confusion_matrix.shape[0]) * 100
     print "Class Score : %f" % (class_score)
 
-    return class_score, hits
+    return class_score
 
 def accuracy_precision(conf_mat_in, nSubjects, nActions):
     confusion_matrix = conf_mat_in.copy()
@@ -345,4 +345,4 @@ def accuracy_precision(conf_mat_in, nSubjects, nActions):
 
     print("F1_Score: ", F1Score)
 
-    return perClass, tps
+    return perClass

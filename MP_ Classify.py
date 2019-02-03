@@ -53,7 +53,7 @@ savefig_conf = os.getcwd() + "/plots/mydataset_plots/confusion_matrix/"
 
 #mydataset
 savefig_evalmat = os.getcwd() + "/plots/mydataset_plots/"
-params_evalmat = [1, savefig_evalmat]
+params_evalmat = [0, savefig_evalmat]
 
 #Threshold precision recall savefig
 #mhad
@@ -61,7 +61,7 @@ params_evalmat = [1, savefig_evalmat]
 
 #mydataset
 savefig_tpr = os.getcwd() + "/plots/mydataset_plots/TPR/"
-params_tpr = [0, savefig_tpr]
+params_tpr = [1, savefig_tpr]
 
 # subject_labels = ["S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09", "S10", "S11", "S12"]
 
@@ -70,7 +70,7 @@ subject_labels = ["S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09"]
 actions_labels = ["A01", "A02", "A03", "A04", "A05"]
 
 # Choose most Confident frames for Classification
-preprocess = False
+preprocess = True
 
 ################### CALLS #####################
 
@@ -136,9 +136,9 @@ np.save('eval_mat_new.npy', confusion_matrix_all)
 
 # Dataset Classification Score
 class_score = cdb.classScore(confusion_matrix_all, nSubjects)
-print "Class_Score : %.3f" % class_score
+print ("Class_Score : %.3f" % class_score)
 # Accuracy - Precision - Recall [Confusion_Matrix Total / Per Class]
-perClass, total = cdb.accuracy_precision(confusion_matrix_all, nSubjects, nActions)
+perClass= cdb.accuracy_precision(confusion_matrix_all, nSubjects, nActions)
 
 # Threshold: 0:1:0.05 - Calculate Accuracy - Precision - Recall
 # tpr.precision_recall(confusion_matrix_all, nSubjects, nActions, actions_labels, save_fig_tpr=params_tpr)
