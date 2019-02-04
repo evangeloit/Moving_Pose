@@ -12,6 +12,8 @@ import functools
 # import json
 from scipy.spatial.distance import pdist, squareform
 # import itertools
+import random
+
 def db_construct(dtpath, landmarks_path, model_name, savefig=None):
     print("Constructing Database from files")
     """FEATURE VECTOR CALCULATION"""
@@ -287,11 +289,14 @@ def classScore(conf_mat_in, nSubjects):
             hits += 1
 
     class_score = (float(hits) / confusion_matrix.shape[0]) * 100
-    print "Class Score : %f" % (class_score)
+    print "\n"
+    print "Classification Score [Simple/ Multiple training Samples] \n"
+    print "Class Score : %f" % class_score
+    print "\n"
 
     return class_score
 
-def accuracy_precision(conf_mat_in, nSubjects, nActions):
+def accuracy_multipleSample(conf_mat_in, nSubjects, nActions):
     confusion_matrix = conf_mat_in.copy()
 
     np.fill_diagonal(confusion_matrix, float('inf'))
@@ -334,15 +339,119 @@ def accuracy_precision(conf_mat_in, nSubjects, nActions):
     avgPerf = np.mean(perClass, axis=0)
     F1Score = 2 * ((prec * rec) / (prec + rec))
 
-    print("Per Class")
-    print("Action1: ", perClassRound[0, :])
-    print("Action2: ", perClassRound[1, :])
-    print("Action3: ", perClassRound[2, :])
-    print("Action4: ", perClassRound[3, :])
+    print "Performance per Class [Multiple Training Samples/ 1 Action repetition]\n"
+    print "Action1: ", perClassRound[0, :]
+    print "Action2: ", perClassRound[1, :]
+    print "Action3: ", perClassRound[2, :]
+    print "Action4: ", perClassRound[3, :]
 
-    print("Average of the classes above")
-    print("Average Accuracy:%.3f " % avgPerf[0], "Average Precision:%.3f " % avgPerf[1], "Average Recall:%.3f " % avgPerf[2])
+    print"\n"
+    print "Average performance: Acc: %.3f" % avgPerf[0], " Prec: %.3f" % avgPerf[1], "Recall: %.3f" % avgPerf[2]
 
-    print("F1_Score: ", F1Score)
+    print "F1_Score: ", F1Score
 
     return perClass
+
+def accuracy_oneSample(conf_mat_in, nSubjects, nActions, iterations):
+
+    confusion_matrix = conf_mat_in.copy()
+
+    np.fill_diagonal(confusion_matrix, float('inf'))
+    class_perf = np.zeros((nActions, 4), dtype=float)
+    heatmap = np.zeros((nActions, nActions))
+    heatmapBinary = np.zeros(4)
+
+    for iter in range(0, iterations):
+
+        indices = [random.randrange(0, 8), random.randrange(9, 17), random.randrange(18, 26), random.randrange(27, 35)]
+        # print "\n New random training Samples"
+        # print(indices)
+        # print "S%i" %(indices[0] % nSubjects)+"_a1"
+        # print "S%i" %(indices[1] % nSubjects)+"_a2"
+        # print "S%i" %(indices[2] % nSubjects)+"_a3"
+        # print "S%i" %(indices[3] % nSubjects)+"_a4"
+
+        for action in range(0, nActions):
+            tp = 0.0
+            fp = 0.0
+            tn = 0.0
+            fn = 0.0
+
+            for row in enumerate(confusion_matrix):
+
+                row_elements = row[1]
+                row_index = row[0]
+
+                # Random Elements not include the current row number
+                row_rand_elements = row_elements[[indices[0] + (indices[0] == row_index) % nSubjects,
+                                                  indices[1] + (indices[1] == row_index) % nSubjects,
+                                                  indices[2] + (indices[2] == row_index) % nSubjects,
+                                                  indices[3] + (indices[3] == row_index) % nSubjects]]
+
+                running_class = row_index / nSubjects
+
+                predict = np.argmin(row_rand_elements, axis=0)
+
+                # Update Heatmap
+                heatmap[running_class][predict] += 1.0
+
+                groundtruth = (action == row_index / nSubjects)  # -> true/false (should)
+                predict = (predict == action)
+
+                if predict == groundtruth:
+                    heatmapBinary[action] += predict
+
+                # if groundtruth:
+                #     if groundtruth == predict: # (groundtruth: yes, predictor: yes)
+                #         tp += 1
+                #     else:                      # (groundtruth: yes, predictor: no)
+                #         fn += 1
+                # else:  # negative
+                #     if groundtruth != predict: # (groundtruth: no, predictor: yes)
+                #         fp += 1
+                #     else:                      # (groundtruth: no, predictor: no)
+                #         tn += 1
+
+                if groundtruth:
+                    if predict:  # (groundtruth: yes, predictor: yes)
+                        tp += 1
+                    else:  # (groundtruth: yes, predictor: no)
+                        fn += 1
+                else:  # negative
+                    if predict:  # (groundtruth: no, predictor: yes)
+                        fp += 1
+                    else:  # (groundtruth: no, predictor: no)
+                        tn += 1
+
+            acc = (tp + tn) / (tp + tn + fp + fn)
+            prec = tp / (tp + fp + 0.001)
+            rec = tp / (tp + fn)
+            overlap = tp / (tp + fp + fn)
+
+            class_perf[action][0] += acc
+            class_perf[action][1] += prec
+            class_perf[action][2] += rec
+            class_perf[action][3] += overlap
+
+    # Performance per class
+    class_perf = class_perf / iter
+    class_perf_round = np.round(class_perf, decimals=4)
+    # Average performance
+    avgPerf = np.mean(class_perf, axis=0)
+    F1Score = 2 * ((avgPerf[1] * avgPerf[2]) / (avgPerf[1] + avgPerf[2]))
+
+    print "\n"
+    print "Performance per Class [1 Training Sample/ 1 Action repetition]\n"
+    print "Average over " + str(iterations) + " iterations\n"
+
+    print "Action1: ", class_perf_round[0, :]
+    print "Action2: ", class_perf_round[1, :]
+    print "Action3: ", class_perf_round[2, :]
+    print "Action4: ", class_perf_round[3, :]
+
+    print"\n"
+    print"Average performance: Acc: %.3f" % avgPerf[0], " Prec: %.3f" % avgPerf[1], "Recall: %.3f" % avgPerf[2], "Overlap: %.3f" % avgPerf[3]
+
+    print "\n"
+    print "F1_Score: ", F1Score
+    return class_perf_round, avgPerf

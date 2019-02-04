@@ -53,7 +53,7 @@ savefig_conf = os.getcwd() + "/plots/mydataset_plots/confusion_matrix/"
 
 #mydataset
 savefig_evalmat = os.getcwd() + "/plots/mydataset_plots/"
-params_evalmat = [0, savefig_evalmat]
+params_evalmat = [1, savefig_evalmat]
 
 #Threshold precision recall savefig
 #mhad
@@ -61,7 +61,7 @@ params_evalmat = [0, savefig_evalmat]
 
 #mydataset
 savefig_tpr = os.getcwd() + "/plots/mydataset_plots/TPR/"
-params_tpr = [1, savefig_tpr]
+params_tpr = [0, savefig_tpr]
 
 # subject_labels = ["S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09", "S10", "S11", "S12"]
 
@@ -70,7 +70,7 @@ subject_labels = ["S01", "S02", "S03", "S04", "S05", "S06", "S07", "S08", "S09"]
 actions_labels = ["A01", "A02", "A03", "A04", "A05"]
 
 # Choose most Confident frames for Classification
-preprocess = True
+preprocess = False
 
 ################### CALLS #####################
 
@@ -110,10 +110,10 @@ if preprocess:
     np.save('fv_subj_conf.npy', fv_subj_modified)
 
     database_diff = conf_database.shape[0] - mostConf.shape[0]
-    print("Database all frames: ", conf_database.shape[0])
-    print("Database Conf frames: ", mostConf.shape[0])
-    print("Frame Loss : ", database_diff)
-    print("Database Loss % : ", (float(database_diff)/conf_database.shape[0])*100)
+    print "\nDatabase all frames: ", conf_database.shape[0]
+    print "Database Conf frames: ", mostConf.shape[0]
+    print "Frame Loss : ", database_diff
+    print "Database Loss %.3f percent : " % ((float(database_diff)/conf_database.shape[0])*100)
 
 else:
 
@@ -127,18 +127,24 @@ else:
 # cdb.self_similarity(fv_subj_modified, actions_labels, subject_labels, savefig=savefig_sim)
 
 #Compute DTW
-# evmat = cdb.computeDTW(fv_subj_conf, dtpath, actions_labels, sflag=sflag, params_dtw=params_dtw, savefig_conf=savefig_conf)
 evmat = cdb.computeDTW(fv_subj_modified, dtpath, actions_labels, sflag=sflag, params_dtw=params_dtw, savefig_conf=savefig_conf)
 
 # Evaluation Matrix
 confusion_matrix_all = cfm.evaluation_matrix(evmat, nSubjects, nActions, savefig_eval=params_evalmat)
 np.save('eval_mat_new.npy', confusion_matrix_all)
 
+#### Multiples Samples in training set #####
+
 # Dataset Classification Score
 class_score = cdb.classScore(confusion_matrix_all, nSubjects)
-# print ("Class_Score : %.3f" % class_score)
+
 # Accuracy - Precision - Recall [Confusion_Matrix Total / Per Class]
-perClass= cdb.accuracy_precision(confusion_matrix_all, nSubjects, nActions)
+mClassPerf = cdb.accuracy_multipleSample(confusion_matrix_all, nSubjects, nActions)
+
+##### 1 Sample in Training Set #######
+
+# Performance per class and Average. [iterations: Pick different random training samples in every iteration and compute aveage per class and average overall]
+ClassPerformance, AveragePerformance = cdb.accuracy_oneSample(confusion_matrix_all, nSubjects, nActions, 1000)
 
 # Threshold: 0:1:0.05 - Calculate Accuracy - Precision - Recall
 # tpr.precision_recall(confusion_matrix_all, nSubjects, nActions, actions_labels, save_fig_tpr=params_tpr)

@@ -5,7 +5,7 @@ import json
 dtpath = '/home/evangeloit/Desktop/GitBlit_Master/Moving_Pose_Descriptor/Mydataset/data/'
 
 
-def db_json_export(dtpath,export=None):
+def db_json_export(dtpath, export=None):
     subj_name = mpt.AlpNumSorter(os.listdir(dtpath))  # List of Subjects in the directory
     mydataset = []
 

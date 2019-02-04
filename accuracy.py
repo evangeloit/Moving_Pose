@@ -13,7 +13,7 @@ heatmap = np.zeros((nActions, nActions))
 heatmapBinary = np.zeros(4)
 
 
-for iter in range(0, 5000):
+for iter in range(0, 10000):
 
     indices = [random.randrange(0, 8), random.randrange(9, 17), random.randrange(18, 26), random.randrange(27, 35)]
 
@@ -92,5 +92,5 @@ print "Action3: ", class_perf_round[2, :]
 print "Action4: ", class_perf_round[3, :]
 
 print"\n"
-print"Average performance: Acc: %.3f" % avgPerf[0]," Prec: %.3f" % avgPerf[1], "Recall: %.3f" % avgPerf[2]
+print"Average performance: Acc: %.3f" % avgPerf[0], " Prec: %.3f" % avgPerf[1], "Recall: %.3f" % avgPerf[2]
 print
