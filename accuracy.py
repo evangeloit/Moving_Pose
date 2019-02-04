@@ -8,12 +8,12 @@ nSubjects = 9
 nActions = 4
 
 np.fill_diagonal(confusion_matrix, float('inf'))
-class_perf = np.zeros((nActions, 3), dtype=object)
+class_perf = np.zeros((nActions, 3), dtype=float)
 heatmap = np.zeros((nActions, nActions))
 heatmapBinary = np.zeros(4)
 
 
-for iter in range(0, 1000):
+for iter in range(0, 5000):
 
     indices = [random.randrange(0, 8), random.randrange(9, 17), random.randrange(18, 26), random.randrange(27, 35)]
 
@@ -71,11 +71,26 @@ for iter in range(0, 1000):
                     tn += 1
 
         acc = (tp + tn) / (tp + tn + fp + fn)
-        prec = tp / (tp + fp + 0.005)
+        prec = tp / (tp + fp + 0.001)
         rec = tp / (tp + fn)
 
         class_perf[action][0] += acc
         class_perf[action][1] += prec
         class_perf[action][2] += rec
 
+# Performance per class
+class_perf = class_perf/iter
+class_perf_round = np.round(class_perf, decimals=4)
+# Average performance
+avgPerf = np.mean(class_perf, axis=0)
+
+print "Performance per Class\n"
+
+print "Action1: ", class_perf_round[0, :]
+print "Action2: ", class_perf_round[1, :]
+print "Action3: ", class_perf_round[2, :]
+print "Action4: ", class_perf_round[3, :]
+
+print"\n"
+print"Average performance: Acc: %.3f" % avgPerf[0]," Prec: %.3f" % avgPerf[1], "Recall: %.3f" % avgPerf[2]
 print

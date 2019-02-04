@@ -13,7 +13,7 @@ dtpath = '/home/evangeloit/Desktop/GitBlit_Master/Moving_Pose_Descriptor/Mydatas
 landmarks_path = "/home/evangeloit/Desktop/GitBlit_Master/Moving_Pose_Descriptor/Mydataset/res/results_camera_invariant/"
 # model_name = 'mh_body_male_customquat'
 model_name = 'mh_body_male_custom_1050'
-dest_path = "/home/evangeloit/Desktop/GitBlit_Master/Moving_Pose_Descriptor/test_sequences/"
+dest_path = "/home/evangeloit/Desktop/GitBlit_Master/Moving_Pose_Descriptor/test_sequences/mydataset/"
 
 # sflag =  0 : Turn off plots , 1: save figures to path. Global parameter
 sflag = 0
@@ -136,7 +136,7 @@ np.save('eval_mat_new.npy', confusion_matrix_all)
 
 # Dataset Classification Score
 class_score = cdb.classScore(confusion_matrix_all, nSubjects)
-print ("Class_Score : %.3f" % class_score)
+# print ("Class_Score : %.3f" % class_score)
 # Accuracy - Precision - Recall [Confusion_Matrix Total / Per Class]
 perClass= cdb.accuracy_precision(confusion_matrix_all, nSubjects, nActions)
 
