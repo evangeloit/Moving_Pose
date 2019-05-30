@@ -65,6 +65,7 @@ def db_construct(dtpath, landmarks_path, model_name, savefig=None):
 
             p3d_gauss = mpt.GaussFilter3dPoints(p3d, sigma, t)
 
+            # mpt.smoothPlot(p3d,p3d_gauss)
             #### Create Feature Vector ####
 
             feat_vec, vec, acc = mpt.MovPoseDescriptor(p3d_gauss, StartFrame)

@@ -129,12 +129,12 @@ def smoothPlot(p3d, p3dsmooth):
         # Gaussian Smoothing - Plot ##
         fig1, ax1 = plt.subplots()
 
-        ax1.plot(p3d[:, 3], label='Before Smooth')
-        ax1.plot(p3dsmooth[:, 3], label='After Smooth')
+        ax1.plot(p3d[:, 3], label='Before filtering')
+        ax1.plot(p3dsmooth[:, 3], label='After filtering')
 
         plt.xlabel('frames')
         plt.ylabel('X coord')
-        plt.title('X coordinate before &\nafter Gaussian smoothing')
+        plt.title('X coordinate before &\nafter Gaussian Filtering')
         plt.legend()
         plt.show(ax1)
         plt.close('all')

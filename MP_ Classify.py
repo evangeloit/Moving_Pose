@@ -53,7 +53,7 @@ savefig_conf = os.getcwd() + "/plots/mydataset_plots/confusion_matrix/"
 
 #mydataset
 savefig_evalmat = os.getcwd() + "/plots/mydataset_plots/"
-params_evalmat = [1, savefig_evalmat]
+params_evalmat = [0, savefig_evalmat]
 
 #Threshold precision recall savefig
 #mhad
